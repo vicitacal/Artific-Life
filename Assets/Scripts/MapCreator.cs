@@ -10,8 +10,8 @@ public class MapCreator : MonoBehaviour
     [SerializeField] private GameObject _Leaf;
     [SerializeField] private GameObject _Root;
     [SerializeField] private GameObject _Wood;
-    public static int MapSixeX { get; private set; } = 2800;
-    public static int MapSixeY { get; private set; } = 1400;
+    public static int MapSixeX { get; private set; } = 30; //2800;
+    public static int MapSixeY { get; private set; } = 50; //1400;
     public static GameObject[] CellsPrefubs { get; private set; }
     public static UnityEvent Tick = new UnityEvent();
     private static float _tickPeriod = 0.5f;

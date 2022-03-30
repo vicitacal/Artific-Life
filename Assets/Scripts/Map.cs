@@ -12,16 +12,23 @@ public class Map : MonoBehaviour
     private void Awake()
     {
         for (int i = 0; i < MapCreator.MapSixeX; i++)
-        {
             for (int j = 0; j < MapCreator.MapSixeY; j++)
             {
-                //Расчитываем по центру самое яркое освещение и меньше к краям
-                Illumination[i, j] = (int)(Mathf.Sin((float)i / MapCreator.MapSixeX * Mathf.PI) * Mathf.Sin((float)j / MapCreator.MapSixeY * Mathf.PI) * 25);
-                //Illumination[i, j] = 20;
+                Illumination[i, j] = (int)(Mathf.Sin((float)i / MapCreator.MapSixeX * Mathf.PI) * Mathf.Sin((float)j / MapCreator.MapSixeY * Mathf.PI) * 50);
+                Charge[i, j] = 10;
             }
-        }
+        MapCreator.Tick.AddListener(Tick);
     }
 
+    private void Tick()
+    {
+        for (int i = 0; i < MapCreator.MapSixeX; i++)
+            for (int j = 0; j < MapCreator.MapSixeY; j++)
+            {
+                if (Charge[i, j] > 100) Charge[i, j]--;
+                if (Charge[i, j] < 100) Charge[i, j]++;
+            }
+    }
     public bool IsPositionAvailable(Vector2Int posToTest)
     {
         if (posToTest.x < 0 || posToTest.y < 0 || posToTest.x > MapCreator.MapSixeX - 1 || posToTest.y > MapCreator.MapSixeY - 1)
@@ -102,7 +109,6 @@ public class Map : MonoBehaviour
         {
             Destroy(creature.gameObject);
         }
-
         Charge = new int[MapCreator.MapSixeX, MapCreator.MapSixeY];
         Organic = new int[MapCreator.MapSixeX, MapCreator.MapSixeY];
         Illumination = new int[MapCreator.MapSixeX, MapCreator.MapSixeY];
@@ -113,16 +119,23 @@ public class Map : MonoBehaviour
 
     public void CreateSprouts(int quantity)
     {
-        int curX = 3, curY = 3;
+        float aspectRatio = (float)MapCreator.MapSixeX / (float)MapCreator.MapSixeY;
+        int countX = Mathf.CeilToInt(Mathf.Sqrt(quantity * aspectRatio));
+        int countY = Mathf.CeilToInt((float)quantity / (float)countX);
+        int ofsetX = MapCreator.MapSixeX / countX;
+        int ofsetY = MapCreator.MapSixeY / countY;
+        int curX = ofsetX / 2;
+        int curY = ofsetY / 2;
 
         for (int i = 0; i < quantity; i++)
         {
             Instantiate(MapCreator.CellsPrefubs[1], new Vector3(curX, 0, curY), Quaternion.identity);
-            curX += 10;
+
+            curX += ofsetX;
             if (curX > MapCreator.MapSixeX - 1)
             {
-                curX = 3;
-                curY += 10;
+                curX = ofsetX / 2;
+                curY += ofsetY;
             }
         }
     }

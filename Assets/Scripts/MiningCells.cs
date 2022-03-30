@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class MiningCells : Creature
 {
-    protected int EnergyStored;
+    protected int EnergyStored = 0;
+    protected int EnergyAccumulated = 0;
     private bool _kill = false;
 
     private void Update()
@@ -26,11 +27,5 @@ public class MiningCells : Creature
     {
         _kill = true;
         return EnergyStored + OwnChatrge;
-    }
-    public override void Kill()
-    {
-        CurentMap.AddOrganic3x3(CurrentPosition, OrganicVolume);
-        CurentMap.AddEnergy3x3(CurrentPosition, EnergyStored / 9);
-        base.Kill();
     }
 }

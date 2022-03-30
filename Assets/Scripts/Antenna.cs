@@ -8,15 +8,16 @@ public class Antenna : MiningCells
     protected override void Awake()
     {
         base.Awake();
-        EnergySpend = 2;
+        EnergySpend = 12;
         MapCreator.Tick.AddListener(antennaTick);
     }
     private void antennaTick()
     {
-        if (CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] >= 10)
+        if (CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] >= 20)
         {
-            EnergyStored += 10;
-            CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] -= 10;
+            CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] -= 20;
+            EnergyStored += 18;
+            EnergyAccumulated += 2;
         }
         else if (CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] > 0)
         {
@@ -25,5 +26,11 @@ public class Antenna : MiningCells
         }
         OwnChatrge -= EnergySpend;
         if (OwnChatrge <= 0) Kill();
+    }
+    public override void Kill()
+    {
+        CurentMap.AddOrganic3x3(CurrentPosition, OrganicVolume / 9);
+        CurentMap.AddEnergy3x3(CurrentPosition, (EnergyStored + EnergyAccumulated + EnergyVolume) / 9);
+        base.Kill();
     }
 }

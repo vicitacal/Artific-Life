@@ -15,7 +15,7 @@ public class CameraControl : MonoBehaviour
     private Vector3 _offset;
     private readonly float MaxX = MapCreator.MapSixeX;
     private readonly float MaxZ = MapCreator.MapSixeY;
-    private readonly float MaxY = 10;
+    private readonly float MaxY = 20;
     private bool _camMode = false;
     private const float _zoomMax = 8;
     private const float _zoomMin = 1;

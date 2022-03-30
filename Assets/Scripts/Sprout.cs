@@ -5,7 +5,7 @@ using UnityEngine;
 public class Sprout : Creature
 {
     public List<MiningCells> Childs = new List<MiningCells>();
-    public const int ChargeSpendPerStep = 8;
+    public const int ChargeSpendPerStep = 25;
 
     [SerializeField] private GameObject _tail;
     private Genome _genome;
@@ -25,12 +25,7 @@ public class Sprout : Creature
         base.Awake();
         _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour });
         MapCreator.Tick.AddListener(Tick);
-        OwnChatrge = 300;
-    }
-
-    private void OnDestroy()
-    {
-        MapCreator.Tick.RemoveListener(Tick);
+        OwnChatrge = 1000;
     }
 
     private void Tick()
@@ -154,7 +149,7 @@ public class Sprout : Creature
             {
                 spawnedCreature = Instantiate(MapCreator.CellsPrefubs[1], worldSpawnPos, calculatedRotation);
                 Sprout createdSprout = spawnedCreature.GetComponentInChildren<Sprout>();
-                createdSprout.SetGenom(_genome);
+                createdSprout.SetGenom(_genome.Genes);
                 createdSprout.ActivateTail();
                 createdSprout.Childs = Childs;
                 spawnedCreature.GetComponent<Creature>().setStartEnergy(childDiscript.ChildCost + 50);
@@ -204,21 +199,21 @@ public class Sprout : Creature
             case 3:
                 return _isMultiCell;
             case 4:
-                return _chargeRize > parametr;
+                return _chargeRize > parametr / 10;
             case 5:
-                return _chargeRize <= parametr;
+                return _chargeRize <= parametr / 10;
             case 6:
-                return CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y] > parametr;
+                return CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
             case 7:
-                return CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y] <= parametr;
+                return CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
             case 8:
-                return CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] > parametr;
+                return CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
             case 9:
-                return CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] <= parametr;
+                return CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
             case 10:
-                return CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] > parametr;
+                return CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
             case 11:
-                return CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] <= parametr;
+                return CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
             case 12:
                 return _prevOperationSuccess;
             case 13:
@@ -230,9 +225,9 @@ public class Sprout : Creature
         }
     }
 
-    public void SetGenom(Genome newGenome)
+    public void SetGenom(Genome.Comand[] newGenome)
     {
-        _genome = newGenome;
+        _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour }, newGenome);
     }
     
     private void ActivateTail()

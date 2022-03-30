@@ -8,7 +8,7 @@ public class Wood : Creature
     protected override void Awake()
     {
         base.Awake();
-        EnergySpend = 4;
+        EnergySpend = 10;
         MapCreator.Tick.AddListener(woodTick);
     }
     private void woodTick()
@@ -17,4 +17,9 @@ public class Wood : Creature
         if (OwnChatrge <= 0) Kill();
     }
 
+    public override void Kill()
+    {
+        CurentMap.AddOrganic3x3(CurrentPosition, OrganicVolume / 9);
+        base.Kill();
+    }
 }

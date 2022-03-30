@@ -159,10 +159,10 @@ public class Genome
             newRandomComand.ComandId = (byte)Random.Range(0, 5);
             newRandomComand.MoveDirection = new DirectionsDescript((byte)Random.Range(0, 4));
             newRandomComand.Condition = (byte)Random.Range(0, 16);
-            newRandomComand.ConditionArgument = (byte)Random.Range(0, 200);
-            newRandomComand.FirstChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(30, 101), ChildPlase.AvaliableOrdinal.firstPos);
-            newRandomComand.SecondChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(30, 101), ChildPlase.AvaliableOrdinal.secondPos);
-            newRandomComand.ThirdChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(30, 101), ChildPlase.AvaliableOrdinal.thirdPos);
+            newRandomComand.ConditionArgument = (byte)Random.Range(0, 500);
+            newRandomComand.FirstChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(50, 400), ChildPlase.AvaliableOrdinal.firstPos);
+            newRandomComand.SecondChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(50, 400), ChildPlase.AvaliableOrdinal.secondPos);
+            newRandomComand.ThirdChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(50, 400), ChildPlase.AvaliableOrdinal.thirdPos);
             newRandomComand.Transition = (byte)Random.Range(0, GenomeLenght);
             return newRandomComand;
         }
@@ -243,10 +243,6 @@ public class Genome
     {
         bool operationSucsess;
         Comand curentComand = _genom[_performingOperationNum];
-        if (_parent == null)
-        {
-            Debug.Log("Shit HAPEN!");
-        }
         if (!_parent.CheckCondition(curentComand))
         {
             _performingOperationNum = curentComand.Transition;

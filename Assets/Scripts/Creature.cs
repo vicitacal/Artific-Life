@@ -9,6 +9,7 @@ public class Creature : MonoBehaviour
     protected int OwnChatrge;
     protected int EnergySpend;
     protected static readonly int OrganicVolume = 50;
+    protected static readonly int EnergyVolume = 30;
     protected static Map CurentMap;
     private bool _energyWasSet = false;
 

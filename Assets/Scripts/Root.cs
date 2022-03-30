@@ -8,15 +8,16 @@ public class Root : MiningCells
     protected override void Awake()
     {
         base.Awake();
-        EnergySpend = 3;
+        EnergySpend = 10;
         MapCreator.Tick.AddListener(rootTick);
     }
     private void rootTick()
     {
-        if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] >= 10)
+        if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] >= 20)
         {
-            EnergyStored += 10;
-            CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] -= 10;
+            CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] -= 20;
+            EnergyStored += 18;
+            EnergyAccumulated += 2;
         }
         else if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] > 0)
         {
@@ -25,5 +26,11 @@ public class Root : MiningCells
         }
         OwnChatrge -= EnergySpend;
         if (OwnChatrge <= 0) Kill();
+    }
+    public override void Kill()
+    {
+        CurentMap.AddOrganic3x3(CurrentPosition, (EnergyAccumulated + EnergyStored) / 9);
+        CurentMap.AddEnergy3x3(CurrentPosition, EnergyVolume / 9);
+        base.Kill();
     }
 }
