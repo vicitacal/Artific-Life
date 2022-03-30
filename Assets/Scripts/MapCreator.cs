@@ -12,27 +12,18 @@ public class MapCreator : MonoBehaviour
     [SerializeField] private GameObject _Wood;
     public static int MapSixeX { get; private set; } = 150;
     public static int MapSixeY { get; private set; } = 150;
-    public static UnityEvent Tick = new UnityEvent();
-    private GameObject _newObject;
-    private GameObject _gameField;
-    public static float StepLenght = 0.4f;
     public static GameObject[] CellsPrefubs { get; private set; }
-    private Map _map;
-    private Sprout.Comand[] _randomGenom = new Sprout.Comand[Sprout.GenomeLenght];
-    private Coroutine _tickCorotine;
+    public static UnityEvent Tick = new UnityEvent();
+    public static float StepLenght = 0.4f;
     private static float _tickPeriod = 0.5f;
+    private GameObject _gameField;
+    private Map _map;
+    private Coroutine _tickCorotine;
 
     private void Awake()
     {
-        CellsPrefubs = new GameObject[6];
-        CellsPrefubs[0] = null;
-        CellsPrefubs[1] = _MainCreature;
-        CellsPrefubs[2] = _Antenna;
-        CellsPrefubs[3] = _Leaf;
-        CellsPrefubs[4] = _Root;
-        CellsPrefubs[5] = _Wood;
-
         InitMap();
+        CellsPrefubs = new GameObject[] {null, _MainCreature, _Antenna, _Leaf, _Root, _Wood};
         _tickCorotine = StartCoroutine(EventTick());
     }
 
@@ -47,34 +38,12 @@ public class MapCreator : MonoBehaviour
         Creature.SetMap(_map);
     }
 
-    public void createSprouts(int quantity)
-    {
-        int curX = 3, curY = 3;
-
-        for (int i = 0; i < quantity; i++)
-        {
-            _newObject = Instantiate(CellsPrefubs[1], new Vector3((curX * StepLenght) + StepLenght / 2, 0,( curY * StepLenght) + StepLenght / 2), Quaternion.identity);
-            for (int j = 0; j < Sprout.GenomeLenght; j++)
-            {
-                _randomGenom[j] = Sprout.Comand.getRandomComand();
-            }
-            _newObject.GetComponentInChildren<Sprout>().SetGenom(_randomGenom);
-
-            curX += 7;
-            if (curX > MapSixeX - 1)
-            {
-                curX = 3;
-                curY += 7;
-            }
-        }
-    }
-
-    public static void setTickPeriod(float newTick)
+    public static void SetTickPeriod(float newTick)
     {
         _tickPeriod = newTick;
     }
 
-    private IEnumerator EventTick()
+    private IEnumerator EventTick() //По хорошему, перенести куда то в более подходящий класс
     {
         while (true)
         {

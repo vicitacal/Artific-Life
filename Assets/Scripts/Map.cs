@@ -94,6 +94,7 @@ public class Map : MonoBehaviour
                 }
         return EatableObjects;
     }
+    
     public void ClearMap()
     {
         Creature[] allObjects = FindObjectsOfType<Creature>();
@@ -110,81 +111,24 @@ public class Map : MonoBehaviour
 
     }
 
-    /*
-    public void AddOrganic3x3(Vector2Int posToAdd, int value)
+    public void CreateSprouts(int quantity)
     {
-        if (posToAdd.x < 0 || posToAdd.y < 0 || posToAdd.x > MapCreator.MapSixeX - 1 || posToAdd.y > MapCreator.MapSixeY - 1)
-            return;
+        GameObject _newObject;
+        int curX = 3, curY = 3;
 
-        Organic[posToAdd.x, posToAdd.y] += value;
-
-        if (posToAdd.x > 0)
+        for (int i = 0; i < quantity; i++)
         {
-            Organic[posToAdd.x - 1, posToAdd.y] += value;
+            _newObject = Instantiate(MapCreator.CellsPrefubs[1], new Vector3((curX * MapCreator.StepLenght) + MapCreator.StepLenght / 2, 0, (curY * MapCreator.StepLenght) + MapCreator.StepLenght / 2), Quaternion.identity);
+            Sprout newSprout = _newObject.GetComponentInChildren<Sprout>();
+            newSprout.SetGenom(new Genome(newSprout));
 
-            if (posToAdd.y > 0)
-                Organic[posToAdd.x - 1, posToAdd.y - 1] += value;
-
-            if (posToAdd.y < MapCreator.MapSixeY - 1)
-                Organic[posToAdd.x - 1, posToAdd.y + 1] += value;
-
+            curX += 7;
+            if (curX > MapCreator.MapSixeX - 1)
+            {
+                curX = 3;
+                curY += 7;
+            }
         }
-        if (posToAdd.x < MapCreator.MapSixeX - 1)
-        {
-            Organic[posToAdd.x + 1, posToAdd.y] += value;
-
-            if (posToAdd.y < MapCreator.MapSixeY - 1)
-                Organic[posToAdd.x + 1, posToAdd.y + 1] += value;
-
-
-            if (posToAdd.y > 0)
-                Organic[posToAdd.x + 1, posToAdd.y - 1] += value;
-
-        }
-        if (posToAdd.y < MapCreator.MapSixeY - 1)
-            Organic[posToAdd.x, posToAdd.y + 1] += value;
-
-        if (posToAdd.y > 0)
-            Organic[posToAdd.x, posToAdd.y - 1] += value;
     }
-    */
-    /*
-    public void AddEnergy3x3(Vector2Int posToAdd, int value)
-    {
-        if (posToAdd.x < 0 || posToAdd.y < 0 || posToAdd.x > MapCreator.MapSixeX - 1 || posToAdd.y > MapCreator.MapSixeY - 1)
-            return;
-
-        Charge[posToAdd.x, posToAdd.y] += value;
-
-        if (posToAdd.x > 0)
-        {
-            Charge[posToAdd.x - 1, posToAdd.y] += value;
-
-            if (posToAdd.y > 0)
-                Charge[posToAdd.x - 1, posToAdd.y - 1] += value;
-            
-            if (posToAdd.y < MapCreator.MapSixeY - 1)
-                Charge[posToAdd.x - 1, posToAdd.y + 1] += value;
-
-        }
-        if (posToAdd.x < MapCreator.MapSixeX - 1)
-        {
-            Charge[posToAdd.x + 1, posToAdd.y] += value;
-
-            if (posToAdd.y < MapCreator.MapSixeY - 1)
-                Charge[posToAdd.x + 1, posToAdd.y + 1] += value;
-            
-
-            if (posToAdd.y > 0)
-                Charge[posToAdd.x + 1, posToAdd.y - 1] += value;
-
-        }
-        if (posToAdd.y < MapCreator.MapSixeY - 1)
-            Charge[posToAdd.x, posToAdd.y + 1] += value;
-        
-        if (posToAdd.y > 0)
-            Charge[posToAdd.x, posToAdd.y - 1] += value;
-    }
-    */
 
 }

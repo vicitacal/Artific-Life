@@ -4,28 +4,19 @@ using UnityEngine;
 
 public class Genome
 {
-    public struct DirectionsDescript
+    public Genome(Sprout parent)
     {
-        public DirectionsDescript(byte dir)
+        _parent = parent;
+
+        for (int j = 0; j < GenomeLenght; j++)
         {
-            direction = (Directions)dir;
+            _genom[j] = Comand.getRandomComand();
         }
-        public enum Directions
-        {
-            left, up, right, down
-        }
-        public Directions direction;
-        public Vector2Int nextStepPosition(Vector2Int curPos)
-        {
-            switch (direction)
-            {
-                case Directions.left: return new Vector2Int(curPos.x - 1, curPos.y);
-                case Directions.up: return new Vector2Int(curPos.x, curPos.y + 1);
-                case Directions.right: return new Vector2Int(curPos.x + 1, curPos.y);
-                case Directions.down: return new Vector2Int(curPos.x, curPos.y - 1);
-            }
-            return curPos;
-        }
+    }
+    public Genome(Sprout parent, Comand[] comands)
+    {
+        _parent = parent;
+        _genom = comands;
     }
     public struct ChildPlase
     {
@@ -138,21 +129,21 @@ public class Genome
             Position.Ordinal = pos;
         }
         public byte ChildType;
-        public byte ChildCost;
+        public int ChildCost;
         public ChildPlase Position;
     }
     public struct Comand
     {
         public byte ComandId;
-        public byte MoveDirection;
+        public DirectionsDescript MoveDirection;
         public byte Condition;
-        public byte ConditionArgument;
+        public int ConditionArgument;
         public ChildDiscript FirstChild;
         public ChildDiscript SecondChild;
         public ChildDiscript ThirdChild;
         public byte Transition;
 
-        public int getHighstCost()
+        public int getHighstChildCost()
         {
             var highstCost = FirstChild.ChildCost;
             if (SecondChild.ChildCost > highstCost) highstCost = SecondChild.ChildCost;
@@ -164,24 +155,25 @@ public class Genome
         {
             Comand newRandomComand = new Comand();
             newRandomComand.ComandId = (byte)Random.Range(0, 5);
-            newRandomComand.MoveDirection = (byte)Random.Range(0, 4);
+            newRandomComand.MoveDirection = new DirectionsDescript((byte)Random.Range(0, 4));
             newRandomComand.Condition = (byte)Random.Range(0, 16);
             newRandomComand.ConditionArgument = (byte)Random.Range(0, 200);
             newRandomComand.FirstChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(30, 101), ChildPlase.AvaliableOrdinal.firstPos);
             newRandomComand.SecondChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(30, 101), ChildPlase.AvaliableOrdinal.secondPos);
             newRandomComand.ThirdChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(30, 101), ChildPlase.AvaliableOrdinal.thirdPos);
-            newRandomComand.Transition = (byte)Random.Range(0, Sprout.GenomeLenght);
+            newRandomComand.Transition = (byte)Random.Range(0, GenomeLenght);
             return newRandomComand;
         }
     }
 
-    public delegate bool Gene(Comand value);
-    public const int ChargeSpendPerStep = 8;
     public const int GenomeLenght = 24;
-
+    public delegate bool Gene(Comand value);
+    private int _performingOperationNum = 0;
+    private Sprout _parent;
+    private List<Gene> _genePool = new List<Gene>();
     private Comand[] _genom = new Comand[GenomeLenght];
 
-    private void mutateGenome(float chance)
+    public void MutateGenome(float chance)
     {
         if (chance < Random.Range(0f, 1f)) return;
         var geneToChenge = Random.Range(0, GenomeLenght);
@@ -191,7 +183,7 @@ public class Genome
                 _genom[geneToChenge].ComandId = (byte)Random.Range(0, 3);
                 break;
             case 2:
-                _genom[geneToChenge].MoveDirection = (byte)Random.Range(0, 4);
+                _genom[geneToChenge].MoveDirection = new DirectionsDescript((byte)Random.Range(0, 4));
                 break;
             case 3:
                 _genom[geneToChenge].Condition = (byte)Random.Range(0, 33);
@@ -233,13 +225,41 @@ public class Genome
                 }
                 break;
             case 8:
-                _genom[geneToChenge].Transition = (byte)Random.Range(0, Sprout.GenomeLenght);
+                _genom[geneToChenge].Transition = (byte)Random.Range(0, GenomeLenght);
                 break;
         }
     }
 
-    void BLAT()
+    public void AddGenepool(List<Gene> genePool)
     {
-         pls
+        _genePool = new List<Gene>(genePool);
+    }
+
+    public void Tick()
+    {
+        Comand curentComand = _genom[_performingOperationNum];
+        if (!_parent.CheckCondition(curentComand))
+        {
+            _performingOperationNum = curentComand.Transition;
+            curentComand = _genom[_performingOperationNum];
+        }
+
+        //_prevOperationSuccess = GenePool[curentComand.ComandId](curentComand);
+        _performingOperationNum = curentComand.Transition;
+    }
+
+    public string GetDescription()
+    {
+        string description = "";
+
+        for (int i = 0; i < _genom.Length; i++)
+        {
+            description += i == _performingOperationNum ? ">" : "  ";
+            description += i + ") id:" + _genom[i].ComandId + " Dir:" + _genom[i].MoveDirection + " Cond:" + _genom[i].Condition + " Arg:" + _genom[i].ConditionArgument;
+            description += " C1:" + _genom[i].FirstChild.ChildType + " Cost:" + _genom[i].FirstChild.ChildCost + " C2:" + _genom[i].SecondChild.ChildType;
+            description += " Cost:" + _genom[i].SecondChild.ChildCost + " C3:" + _genom[i].ThirdChild.ChildType + " Cost:" + _genom[i].ThirdChild.ChildCost;
+            description += " Jump:" + _genom[i].Transition + "\n";
+        }
+        return description;
     }
 }

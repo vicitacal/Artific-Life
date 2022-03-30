@@ -24,7 +24,6 @@ public class MiningCells : Creature
 
     public int Eat()
     {
-        Debug.Log("I'm eated:" + CurrentPosition);
         _kill = true;
         return EnergyStored + OwnChatrge;
     }

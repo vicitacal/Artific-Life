@@ -8,7 +8,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Button _spawnButton;
     [SerializeField] private Text _spawnCountText;
     [SerializeField] private Slider _sliderSpawnCount;
-    [SerializeField] private MapCreator _mapCreator;
+    [SerializeField] private Map _map;
     [SerializeField] private RectTransform _buttonImageTransform;
     [SerializeField] private RectTransform _descriptionTransform;
     [SerializeField] private Slider _sliderTime;
@@ -26,7 +26,7 @@ public class UIController : MonoBehaviour
     }
     public void callSpawner()
     {
-        _mapCreator.createSprouts(Mathf.FloorToInt(_sliderSpawnCount.value));
+        _map.CreateSprouts(Mathf.FloorToInt(_sliderSpawnCount.value));
         _spawnButton.interactable = false;
     }
 
@@ -47,7 +47,7 @@ public class UIController : MonoBehaviour
     }
     public void ChengeTickPeriod()
     {
-        MapCreator.setTickPeriod(_sliderTime.value);
+        MapCreator.SetTickPeriod(_sliderTime.value);
     }
 
     public void ClearScene()

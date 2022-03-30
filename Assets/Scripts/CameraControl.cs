@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class CameraControl : MonoBehaviour
 {
     [SerializeField] private Text _statusText;
-    [SerializeField] private GameObject _showGenom;
+    [SerializeField] private GameObject _UiGenomTextFeeld;
     private Camera _camera;
     private Vector3 _mouseInput;
     private Transform _targetTransfotm;
     private Vector3 _targetPivitPoint;
-    private Sprout _newSprout;
+    private Sprout _targetSprout;
     private Vector3 _offset;
     private readonly float MaxX = MapCreator.MapSixeX * MapCreator.StepLenght;
     private readonly float MaxZ = MapCreator.MapSixeY * MapCreator.StepLenght;
@@ -133,7 +133,7 @@ public class CameraControl : MonoBehaviour
         {
             if (clickInfo.collider.TryGetComponent<Sprout>(out targetSprout))
             {
-                _newSprout = targetSprout;
+                _targetSprout = targetSprout;
                 transform = targetSprout.transform;
                 return true;
             }
@@ -146,13 +146,13 @@ public class CameraControl : MonoBehaviour
         if (inVal)
         {
             _orbitX = -transform.localEulerAngles.x;
-            _showGenom.SetActive(true);
+            _UiGenomTextFeeld.SetActive(true);
         }
         else
         {
             _mouseInput = transform.rotation.eulerAngles;
             _statusText.text = "";
-            _showGenom.SetActive(false);
+            _UiGenomTextFeeld.SetActive(false);
         }
         _camMode = inVal;
     }
@@ -160,19 +160,10 @@ public class CameraControl : MonoBehaviour
     private void printSproutDiscript()
     {
         _statusText.text = "";
-
-        for (int i = 0; i < _newSprout.Genom.Length; i++)
-        {
-            _statusText.text += i == _newSprout.Opreation ? ">" : "  ";
-            _statusText.text += i + ") id:" + _newSprout.Genom[i].ComandId + " Dir:" + (Sprout.DirectionsDescript.Directions)_newSprout.Genom[i].MoveDirection + " Cond:" + _newSprout.Genom[i].Condition + " Arg:" + _newSprout.Genom[i].ConditionArgument;
-            _statusText.text += " C1:" + _newSprout.Genom[i].FirstChild.ChildType + " Cost:" + _newSprout.Genom[i].FirstChild.ChildCost + " C2:" + _newSprout.Genom[i].SecondChild.ChildType;
-            _statusText.text += " Cost:" + _newSprout.Genom[i].SecondChild.ChildCost + " C3:" + _newSprout.Genom[i].ThirdChild.ChildType + " Cost:" + _newSprout.Genom[i].ThirdChild.ChildCost;
-            _statusText.text += " Jump:" + _newSprout.Genom[i].Transition + "\n";
-        }
-
+        _statusText.text += _targetSprout.Genome.GetDescription();
         _statusText.text += "-----------\n";
-        _statusText.text += "Charge: " + _newSprout.Charge + "\n";
-        _statusText.text += "Charge change: " + _newSprout.ChargeChenge;
+        _statusText.text += "Charge: " + _targetSprout.Charge + "\n";
+        _statusText.text += "Charge change: " + _targetSprout.ChargeChenge;
 
     }
 }

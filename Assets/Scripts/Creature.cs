@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
+    public int CellType = 1;
     protected Vector2Int CurrentPosition;
     protected int OwnChatrge;
     protected int EnergySpend;
-    public int CellType = 1;
     protected static readonly int OrganicVolume = 50;
     protected static Map CurentMap;
     private bool _energyWasSet = false;
