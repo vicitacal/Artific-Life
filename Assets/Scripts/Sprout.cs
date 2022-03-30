@@ -23,11 +23,17 @@ public class Sprout : Creature
     protected override void Awake()
     {
         base.Awake();
-        MapCreator.Tick.AddListener(SproutTick);
+        _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour });
+        MapCreator.Tick.AddListener(Tick);
         OwnChatrge = 300;
     }
 
-    private void SproutTick()
+    private void OnDestroy()
+    {
+        MapCreator.Tick.RemoveListener(Tick);
+    }
+
+    private void Tick()
     {
         if (Childs != null)
             for (int i = 0; i < Childs.Count; i++)
@@ -57,13 +63,13 @@ public class Sprout : Creature
 
         if (isSpawned)
         {
-            MoveSprout(_currentDirection, inputComand.getHighstChildCost());
+            Move(_currentDirection, inputComand.getHighstChildCost());
             return true;
         }
         return false;
     }
 
-    private bool MoveSprout(Genome.Comand inputComand)
+    private bool Move(Genome.Comand inputComand)
     {
         if (!IsMoveAvaliable(inputComand.MoveDirection, CurrentPosition)) return false;
         if (!CurentMap.ChengeObjectPosition(CurrentPosition, inputComand.MoveDirection.nextStepPosition(CurrentPosition))) return false;
@@ -74,17 +80,17 @@ public class Sprout : Creature
         }
         CurrentPosition = inputComand.MoveDirection.nextStepPosition(CurrentPosition);
         _currentDirection = inputComand.MoveDirection;
-        gameObject.transform.position = CalculateWorldtPosition(CurrentPosition);
+        gameObject.transform.position = new Vector3(CurrentPosition.x, 0, CurrentPosition.y);
         gameObject.transform.rotation = CalculateRotation(_currentDirection.direction);
         return true;
     }
 
-    private bool MoveSprout(DirectionsDescript inDirection, int stickCost)
+    private bool Move(DirectionsDescript inDirection, int stickCost)
     {
         Genome.Comand comand = new Genome.Comand();
         comand.MoveDirection = inDirection;
         comand.FirstChild.ChildCost = stickCost;
-        return MoveSprout(comand);
+        return Move(comand);
     }
 
     private bool EatOrganic(Genome.Comand inputComand)
@@ -134,7 +140,7 @@ public class Sprout : Creature
     {
         if (childDiscript.ChildType == 0 || !IsMoveAvaliable(_currentDirection, CurrentPosition)) return false;
         Vector2Int mapSpawnPos = childDiscript.Position.getChildCord(CurrentPosition, _currentDirection.direction);
-        Vector3 worldSpawnPos = CalculateWorldtPosition(mapSpawnPos);
+        Vector3 worldSpawnPos = new Vector3(mapSpawnPos.x, 0, mapSpawnPos.y);
         Quaternion calculatedRotation = CalculateRotation(childDiscript.Position.getChildDirection(_currentDirection.direction));
         GameObject spawnedCreature;
         bool isCreated = false;
@@ -146,7 +152,7 @@ public class Sprout : Creature
             OwnChatrge -= childDiscript.ChildCost;
             if (childDiscript.ChildType == 1)
             {
-                spawnedCreature = Instantiate(gameObject, worldSpawnPos, calculatedRotation);
+                spawnedCreature = Instantiate(MapCreator.CellsPrefubs[1], worldSpawnPos, calculatedRotation);
                 Sprout createdSprout = spawnedCreature.GetComponentInChildren<Sprout>();
                 createdSprout.SetGenom(_genome);
                 createdSprout.ActivateTail();
@@ -166,20 +172,10 @@ public class Sprout : Creature
 
         if (!_isMultiCell && _firstChld)
         {
-            _isMultiCell = true;
             _tail.gameObject.SetActive(true);
+            _isMultiCell = true;
         }
         return isCreated;
-    }
-
-    private Vector3 CalculateWorldtPosition(int posX, int posY, float posZ = 0)
-    {
-        return new Vector3(posX * MapCreator.StepLenght + MapCreator.StepLenght / 2, posZ, posY * MapCreator.StepLenght + MapCreator.StepLenght / 2);
-    }
-
-    private Vector3 CalculateWorldtPosition(Vector2Int inPos)
-    {
-        return CalculateWorldtPosition(inPos.x, inPos.y);
     }
 
     private Quaternion CalculateRotation(DirectionsDescript.Directions inDir)
@@ -237,7 +233,6 @@ public class Sprout : Creature
     public void SetGenom(Genome newGenome)
     {
         _genome = newGenome;
-        _genome.AddGenepool(new List<Genome.Gene> { EatOrganic, MoveSprout, CreateChilds, ShiftOrganic, EatNeighbour });
     }
     
     private void ActivateTail()

@@ -13,8 +13,8 @@ public class CameraControl : MonoBehaviour
     private Vector3 _targetPivitPoint;
     private Sprout _targetSprout;
     private Vector3 _offset;
-    private readonly float MaxX = MapCreator.MapSixeX * MapCreator.StepLenght;
-    private readonly float MaxZ = MapCreator.MapSixeY * MapCreator.StepLenght;
+    private readonly float MaxX = MapCreator.MapSixeX;
+    private readonly float MaxZ = MapCreator.MapSixeY;
     private readonly float MaxY = 10;
     private bool _camMode = false;
     private const float _zoomMax = 8;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
-    public int CellType = 1;
+    [HideInInspector] public int CellType = 1;
     protected Vector2Int CurrentPosition;
     protected int OwnChatrge;
     protected int EnergySpend;
@@ -16,8 +16,8 @@ public class Creature : MonoBehaviour
 
     protected virtual void Awake()
     {
-        CurrentPosition.x = Mathf.FloorToInt(transform.position.x / MapCreator.StepLenght);
-        CurrentPosition.y = Mathf.FloorToInt(transform.position.z / MapCreator.StepLenght);
+        CurrentPosition.x = Mathf.FloorToInt(transform.position.x);
+        CurrentPosition.y = Mathf.FloorToInt(transform.position.z);
         if (!CurentMap.AddToRegistry(this)) Kill();
     }
 

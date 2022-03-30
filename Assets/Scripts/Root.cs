@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Root : MiningCells
 {
-    public const int cellType = 4;
+    [HideInInspector] public const int cellType = 4;
     protected override void Awake()
     {
         base.Awake();

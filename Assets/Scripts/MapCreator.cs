@@ -14,7 +14,6 @@ public class MapCreator : MonoBehaviour
     public static int MapSixeY { get; private set; } = 1400;
     public static GameObject[] CellsPrefubs { get; private set; }
     public static UnityEvent Tick = new UnityEvent();
-    public static float StepLenght = 0.4f;
     private static float _tickPeriod = 0.5f;
     private GameObject _gameField;
     private Map _map;
@@ -30,8 +29,8 @@ public class MapCreator : MonoBehaviour
     public void InitMap()
     {
         _gameField = transform.GetComponentInChildren<Map>().gameObject;
-        _gameField.transform.localScale = new Vector3(MapSixeX / 2.5f, MapSixeY / 2.5f, 1);
-        _gameField.transform.position = new Vector3(MapSixeX / 5f, 0, MapSixeY / 5f);
+        _gameField.transform.localScale = new Vector3(MapSixeX, MapSixeY, 1);
+        _gameField.transform.position = new Vector3(MapSixeX/2 - 0.5f, 0, MapSixeY/2 - 0.5f);
         _gameField.GetComponent<Renderer>().material.mainTextureScale = new Vector2(MapSixeX, MapSixeY);
         _map = _gameField.GetComponent<Map>();
 

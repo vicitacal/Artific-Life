@@ -16,15 +16,14 @@ public class UIController : MonoBehaviour
 
     private void Awake()
     {
-        _sliderSpawnCount.maxValue = (MapCreator.MapSixeX * MapCreator.MapSixeY) / 49;
-        _sliderSpawnCount.onValueChanged.AddListener((value) => { chengeText(value); });
+        _sliderSpawnCount.maxValue = (MapCreator.MapSixeX * MapCreator.MapSixeY) / 100;
         _spawnCountText.text = "1";
     }
-    public void chengeText(float value)
+    public void ChangeCountText()
     {
-        _spawnCountText.text = value.ToString();
+        _spawnCountText.text = _sliderSpawnCount.value.ToString();
     }
-    public void callSpawner()
+    public void CallSpawner()
     {
         _map.CreateSprouts(Mathf.FloorToInt(_sliderSpawnCount.value));
         _spawnButton.interactable = false;

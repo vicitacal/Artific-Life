@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Antenna : MiningCells
 {
-    public const int cellType = 2;
+    [HideInInspector] public const int cellType = 2;
     protected override void Awake()
     {
         base.Awake();

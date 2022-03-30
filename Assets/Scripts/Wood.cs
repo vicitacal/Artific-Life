@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Wood : Creature
 {
-    public const int cellType = 5;
+    [HideInInspector] public const int cellType = 5;
     protected override void Awake()
     {
         base.Awake();

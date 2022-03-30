@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class Genome
 {
-    public Genome(Sprout parent)
+    public Genome(Sprout parent, List<Gene> genePool)
     {
         _parent = parent;
+        _genePool = new List<Gene>(genePool);
 
         for (int j = 0; j < GenomeLenght; j++)
         {
             _genom[j] = Comand.getRandomComand();
         }
     }
-    public Genome(Sprout parent, Comand[] comands)
+    public Genome(Sprout parent, List<Gene> genePool, Comand[] comands)
     {
         _parent = parent;
+        _genePool = new List<Gene>(genePool);
         _genom = comands;
     }
     public struct ChildPlase
@@ -173,6 +175,8 @@ public class Genome
     private List<Gene> _genePool = new List<Gene>();
     private Comand[] _genom = new Comand[GenomeLenght];
 
+    public Comand[] Genes => _genom;
+
     public void MutateGenome(float chance)
     {
         if (chance < Random.Range(0f, 1f)) return;
@@ -239,6 +243,10 @@ public class Genome
     {
         bool operationSucsess;
         Comand curentComand = _genom[_performingOperationNum];
+        if (_parent == null)
+        {
+            Debug.Log("Shit HAPEN!");
+        }
         if (!_parent.CheckCondition(curentComand))
         {
             _performingOperationNum = curentComand.Transition;

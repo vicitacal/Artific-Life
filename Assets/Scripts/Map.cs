@@ -113,20 +113,16 @@ public class Map : MonoBehaviour
 
     public void CreateSprouts(int quantity)
     {
-        GameObject _newObject;
         int curX = 3, curY = 3;
 
         for (int i = 0; i < quantity; i++)
         {
-            _newObject = Instantiate(MapCreator.CellsPrefubs[1], new Vector3((curX * MapCreator.StepLenght) + MapCreator.StepLenght / 2, 0, (curY * MapCreator.StepLenght) + MapCreator.StepLenght / 2), Quaternion.identity);
-            Sprout newSprout = _newObject.GetComponentInChildren<Sprout>();
-            newSprout.SetGenom(new Genome(newSprout));
-
-            curX += 7;
+            Instantiate(MapCreator.CellsPrefubs[1], new Vector3(curX, 0, curY), Quaternion.identity);
+            curX += 10;
             if (curX > MapCreator.MapSixeX - 1)
             {
                 curX = 3;
-                curY += 7;
+                curY += 10;
             }
         }
     }
