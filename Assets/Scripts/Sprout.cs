@@ -23,7 +23,6 @@ public class Sprout : Creature
     protected override void Awake()
     {
         base.Awake();
-        _genome.AddGenepool(new List<Genome.Gene> { EatOrganic, MoveSprout, CreateChilds, ShiftOrganic, EatNeighbour });
         MapCreator.Tick.AddListener(SproutTick);
         OwnChatrge = 300;
     }
@@ -40,7 +39,8 @@ public class Sprout : Creature
                 }
                 else
                     OwnChatrge += Childs[i].collectEnergy();
-            }   
+            }
+        _prevOperationSuccess = _genome.PerformGene();
         OwnChatrge -= ChargeSpendPerStep;
         _chargeRize = OwnChatrge - _previousEnergy;
         _previousEnergy = OwnChatrge;
@@ -78,7 +78,7 @@ public class Sprout : Creature
         gameObject.transform.rotation = CalculateRotation(_currentDirection.direction);
         return true;
     }
-    
+
     private bool MoveSprout(DirectionsDescript inDirection, int stickCost)
     {
         Genome.Comand comand = new Genome.Comand();
@@ -86,7 +86,7 @@ public class Sprout : Creature
         comand.FirstChild.ChildCost = stickCost;
         return MoveSprout(comand);
     }
-    
+
     private bool EatOrganic(Genome.Comand inputComand)
     {
         if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] >= 10)
@@ -103,7 +103,7 @@ public class Sprout : Creature
         }
         return false;
     }
-    
+
     private bool ShiftOrganic(Genome.Comand inputComand)
     {
         if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] == 0) return false;
@@ -112,7 +112,7 @@ public class Sprout : Creature
         CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] = 0;
         return true;
     }
-    
+
     private bool EatNeighbour(Genome.Comand inputComand)
     {
         List<Creature> eatableObject = CurentMap.GetEatableObjects(CurrentPosition, 2);
@@ -129,7 +129,7 @@ public class Sprout : Creature
         }
         return false;
     }
-    
+
     private bool CreateChild(Genome.ChildDiscript childDiscript)
     {
         if (childDiscript.ChildType == 0 || !IsMoveAvaliable(_currentDirection, CurrentPosition)) return false;
@@ -237,6 +237,7 @@ public class Sprout : Creature
     public void SetGenom(Genome newGenome)
     {
         _genome = newGenome;
+        _genome.AddGenepool(new List<Genome.Gene> { EatOrganic, MoveSprout, CreateChilds, ShiftOrganic, EatNeighbour });
     }
     
     private void ActivateTail()

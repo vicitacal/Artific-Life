@@ -34,14 +34,14 @@ public class UIController : MonoBehaviour
     {
         if (_isRolled)
         {
-            _descriptionTransform.offsetMin = new Vector2(0f, 453f);
-            _buttonImageTransform.rotation = Quaternion.identity;
+            _descriptionTransform.offsetMin = new Vector2(0f, 445f);
+            _buttonImageTransform.rotation = Quaternion.Euler(0f, 0f, 180f);
             _isRolled = false;
         }
         else
         {
             _descriptionTransform.offsetMin = new Vector2(0f, 0f);
-            _buttonImageTransform.rotation = Quaternion.Euler(0f,0f,180f);
+            _buttonImageTransform.rotation = Quaternion.identity;
             _isRolled = true;
         }
     }

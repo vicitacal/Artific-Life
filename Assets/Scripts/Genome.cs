@@ -235,8 +235,9 @@ public class Genome
         _genePool = new List<Gene>(genePool);
     }
 
-    public void Tick()
+    public bool PerformGene()
     {
+        bool operationSucsess;
         Comand curentComand = _genom[_performingOperationNum];
         if (!_parent.CheckCondition(curentComand))
         {
@@ -244,8 +245,9 @@ public class Genome
             curentComand = _genom[_performingOperationNum];
         }
 
-        //_prevOperationSuccess = GenePool[curentComand.ComandId](curentComand);
+        operationSucsess = _genePool[curentComand.ComandId](curentComand);
         _performingOperationNum = curentComand.Transition;
+        return operationSucsess;
     }
 
     public string GetDescription()
@@ -255,7 +257,7 @@ public class Genome
         for (int i = 0; i < _genom.Length; i++)
         {
             description += i == _performingOperationNum ? ">" : "  ";
-            description += i + ") id:" + _genom[i].ComandId + " Dir:" + _genom[i].MoveDirection + " Cond:" + _genom[i].Condition + " Arg:" + _genom[i].ConditionArgument;
+            description += i + ") id:" + _genom[i].ComandId + " Dir:" + _genom[i].MoveDirection.direction + " Cond:" + _genom[i].Condition + " Arg:" + _genom[i].ConditionArgument;
             description += " C1:" + _genom[i].FirstChild.ChildType + " Cost:" + _genom[i].FirstChild.ChildCost + " C2:" + _genom[i].SecondChild.ChildType;
             description += " Cost:" + _genom[i].SecondChild.ChildCost + " C3:" + _genom[i].ThirdChild.ChildType + " Cost:" + _genom[i].ThirdChild.ChildCost;
             description += " Jump:" + _genom[i].Transition + "\n";
