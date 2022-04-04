@@ -13,13 +13,13 @@ public class Wood : Creature
     }
     private void woodTick()
     {
-        OwnChatrge -= EnergySpend;
-        if (OwnChatrge <= 0) Kill();
+        OwnCharge -= EnergySpend;
+        if (OwnCharge <= 0) Kill();
     }
 
     public override void Kill()
     {
-        CurentMap.AddOrganic3x3(CurrentPosition, OrganicVolume / 9);
+        CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
         base.Kill();
     }
 }

@@ -67,9 +67,12 @@
     <Compile Include="Assets\Scripts\Wood.cs" />
     <Compile Include="Assets\Scripts\Sprout.cs" />
     <Compile Include="Assets\Scripts\GeneralPurpose.cs" />
-    <Compile Include="Assets\Scripts\MapViewer.cs" />
     <Compile Include="Assets\Scripts\MiningCells.cs" />
     <Compile Include="Assets\Scripts\Antenna.cs" />
+    <Compile Include="Assets\Scripts\Organic.cs" />
+    <Compile Include="Assets\Scripts\EnergyArray.cs" />
+    <Compile Include="Assets\Scripts\Charge.cs" />
+    <Compile Include="Assets\Scripts\Illumination.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

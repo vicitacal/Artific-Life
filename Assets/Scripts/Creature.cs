@@ -1,16 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Creature : MonoBehaviour
 {
     [HideInInspector] public int CellType = 1;
     protected Vector2Int CurrentPosition;
-    protected int OwnChatrge;
+    protected int OwnCharge;
     protected int EnergySpend;
     protected static readonly int OrganicVolume = 90;
-    protected static readonly int EnergyVolume = 40;
-    protected static Map CurentMap;
+    protected static readonly int ChargeVolume = 40;
+    protected static Map CurrentMap;
     private bool _energyWasSet = false;
 
     public Vector2Int Position => CurrentPosition;
@@ -19,17 +17,17 @@ public class Creature : MonoBehaviour
     {
         CurrentPosition.x = Mathf.FloorToInt(transform.position.x);
         CurrentPosition.y = Mathf.FloorToInt(transform.position.z);
-        if (!CurentMap.AddToRegistry(this)) Kill();
+        if (!CurrentMap.AddToRegistry(this)) Kill();
     }
 
     public static void SetMap(Map newMap)
     {
-        CurentMap = newMap;
+        CurrentMap = newMap;
     }
 
     public virtual void Kill()
     {
-        CurentMap.RemoveFromMap(CurrentPosition);
+        CurrentMap.RemoveFromMap(CurrentPosition);
         Destroy(gameObject);
     }
 
@@ -37,7 +35,7 @@ public class Creature : MonoBehaviour
     {
         if (!_energyWasSet)
         {
-            OwnChatrge = startEnergy;
+            OwnCharge = startEnergy;
             _energyWasSet = true;
         }
     }

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class MiningCells : Creature
 {
@@ -26,6 +23,6 @@ public class MiningCells : Creature
     public int Eat()
     {
         _kill = true;
-        return EnergyStored + OwnChatrge;
+        return EnergyStored + OwnCharge;
     }
 }

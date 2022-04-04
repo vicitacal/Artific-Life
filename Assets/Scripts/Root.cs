@@ -13,24 +13,23 @@ public class Root : MiningCells
     }
     private void rootTick()
     {
-        if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] >= 20)
+        int resivedCharge = CurrentMap.OrganicField.TakeOrganic(CurrentPosition);
+        if (resivedCharge > 15)
         {
-            CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] -= 20;
-            EnergyStored += 18;
-            EnergyAccumulated += 2;
+            EnergyAccumulated += resivedCharge / 10;
+            EnergyStored += resivedCharge - EnergyAccumulated;
         }
-        else if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] > 0)
+        else
         {
-            EnergyStored += CurentMap.Organic[CurrentPosition.x, CurrentPosition.y];
-            CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] = 0;
+            EnergyStored += resivedCharge;
         }
-        OwnChatrge -= EnergySpend;
-        if (OwnChatrge <= 0) Kill();
+        OwnCharge -= EnergySpend;
+        if (OwnCharge <= 0) Kill();
     }
     public override void Kill()
     {
-        CurentMap.AddOrganic3x3(CurrentPosition, (EnergyAccumulated + EnergyStored) / 9);
-        CurentMap.AddEnergy3x3(CurrentPosition, EnergyVolume / 9);
+        CurrentMap.OrganicField.AddToArea(CurrentPosition, (EnergyAccumulated + EnergyStored) / 9, 1);
+        CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume / 9, 1);
         base.Kill();
     }
 }

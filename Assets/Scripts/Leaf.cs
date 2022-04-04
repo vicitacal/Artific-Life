@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Leaf : MiningCells
@@ -13,18 +11,19 @@ public class Leaf : MiningCells
     }
     private void leafTick()
     {
-        EnergyStored += CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y];
-        if (CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y] > 2)
+        int resivedCharge = CurrentMap.IlluminationField.pickValue(CurrentPosition);
+        EnergySpend += resivedCharge;
+        if (resivedCharge > 2)
         { 
             EnergyAccumulated += 1;
         }
-        OwnChatrge -= EnergySpend;
-        if (OwnChatrge <= 0) Kill();
+        OwnCharge -= EnergySpend;
+        if (OwnCharge <= 0) Kill();
     }
     public override void Kill()
     {
-        CurentMap.AddOrganic3x3(CurrentPosition, OrganicVolume / 9);
-        CurentMap.AddEnergy3x3(CurrentPosition, (EnergyStored + EnergyAccumulated) / 9);
+        CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
+        CurrentMap.ChargeField.AddToArea(CurrentPosition, (EnergyStored + EnergyAccumulated) / 9, 1);
         base.Kill();
     }
 }

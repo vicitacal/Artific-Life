@@ -16,7 +16,7 @@ public class Sprout : Creature
     private bool _firstChld = false;
     private bool _prevOperationSuccess = false;
 
-    public int Charge => OwnChatrge;
+    public int Charge => OwnCharge;
     public int ChargeChenge => _chargeRize;
     public Genome Genome => _genome;
 
@@ -25,7 +25,7 @@ public class Sprout : Creature
         base.Awake();
         _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour });
         MapCreator.Tick.AddListener(Tick);
-        OwnChatrge = 1000;
+        OwnCharge = 1000;
     }
 
     private void Tick()
@@ -39,13 +39,13 @@ public class Sprout : Creature
                     i--;
                 }
                 else
-                    OwnChatrge += Childs[i].collectEnergy();
+                    OwnCharge += Childs[i].collectEnergy();
             }
         _prevOperationSuccess = _genome.PerformGene();
-        OwnChatrge -= ChargeSpendPerStep;
-        _chargeRize = OwnChatrge - _previousEnergy;
-        _previousEnergy = OwnChatrge;
-        if (OwnChatrge <= 0) Kill();
+        OwnCharge -= ChargeSpendPerStep;
+        _chargeRize = OwnCharge - _previousEnergy;
+        _previousEnergy = OwnCharge;
+        if (OwnCharge <= 0) Kill();
         _genome.MutateGenome(0.8f);
     }
     
@@ -67,7 +67,7 @@ public class Sprout : Creature
     private bool Move(Genome.Comand inputComand)
     {
         if (!IsMoveAvaliable(inputComand.MoveDirection, CurrentPosition)) return false;
-        if (!CurentMap.ChengeObjectPosition(CurrentPosition, inputComand.MoveDirection.nextStepPosition(CurrentPosition))) return false;
+        if (!CurrentMap.ChengeObjectPosition(CurrentPosition, inputComand.MoveDirection.nextStepPosition(CurrentPosition))) return false;
         if (_isMultiCell)
         {
             Wood newWood = Instantiate(MapCreator.CellsPrefubs[5], new Vector3(transform.position.x, 0, transform.position.z), transform.rotation).GetComponent<Wood>();
@@ -90,33 +90,24 @@ public class Sprout : Creature
 
     private bool EatOrganic(Genome.Comand inputComand)
     {
-        if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] >= 10)
+        int resivedCharge = CurrentMap.OrganicField.TakeOrganic(CurrentPosition);
+        if (resivedCharge > 0)
         {
-            OwnChatrge += 10;
-            CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] -= 10;
+            OwnCharge += resivedCharge;
             return true;
         }
-        else if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] > 0)
-        {
-            OwnChatrge += CurentMap.Organic[CurrentPosition.x, CurrentPosition.y];
-            CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] = 0;
-            return true;
-        }
-        return false;
+        else 
+            return false;
     }
 
     private bool ShiftOrganic(Genome.Comand inputComand)
     {
-        if (CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] == 0) return false;
-        var shiftPosition = inputComand.MoveDirection.nextStepPosition(CurrentPosition);
-        CurentMap.Organic[shiftPosition.x, shiftPosition.y] += CurentMap.Organic[CurrentPosition.x, CurrentPosition.y];
-        CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] = 0;
-        return true;
+        return CurrentMap.OrganicField.ShiftValue(CurrentPosition, _currentDirection);
     }
 
     private bool EatNeighbour(Genome.Comand inputComand)
     {
-        List<Creature> eatableObject = CurentMap.GetEatableObjects(CurrentPosition, 2);
+        List<Creature> eatableObject = CurrentMap.GetEatableObjects(CurrentPosition, 2);
         while (eatableObject.Count > 0) {
             var eatIndex = Random.Range(0, eatableObject.Count);
             if (Childs.Contains((MiningCells)eatableObject[eatIndex]))
@@ -124,7 +115,7 @@ public class Sprout : Creature
             else
             {
                 MiningCells CellToEat = (MiningCells)eatableObject[eatIndex];
-                OwnChatrge += CellToEat.Eat();
+                OwnCharge += CellToEat.Eat();
                 return true;
             }
         }
@@ -140,11 +131,11 @@ public class Sprout : Creature
         GameObject spawnedCreature;
         bool isCreated = false;
 
-        if (!CurentMap.IsPositionAvailable(mapSpawnPos)) return false;
+        if (!CurrentMap.IsPositionAvailable(mapSpawnPos)) return false;
 
-        if (OwnChatrge > childDiscript.ChildCost + ChargeSpendPerStep)
+        if (OwnCharge > childDiscript.ChildCost + ChargeSpendPerStep)
         {
-            OwnChatrge -= childDiscript.ChildCost;
+            OwnCharge -= childDiscript.ChildCost;
             if (childDiscript.ChildType == 1)
             {
                 spawnedCreature = Instantiate(MapCreator.CellsPrefubs[1], worldSpawnPos, calculatedRotation);
@@ -183,7 +174,7 @@ public class Sprout : Creature
 
     private bool IsMoveAvaliable(DirectionsDescript direction, Vector2Int curPos)
     {
-        return CurentMap.IsPositionAvailable(direction.nextStepPosition(curPos));
+        return CurrentMap.IsPositionAvailable(direction.nextStepPosition(curPos));
     }
 
     public bool CheckCondition(Genome.Comand inputComand)
@@ -193,9 +184,9 @@ public class Sprout : Creature
         switch (inputComand.Condition)
         {
             case 0:
-                return OwnChatrge > parametr;
+                return OwnCharge > parametr;
             case 1:
-                return OwnChatrge <= parametr;
+                return OwnCharge <= parametr;
             case 3:
                 return _isMultiCell;
             case 4:
@@ -203,30 +194,32 @@ public class Sprout : Creature
             case 5:
                 return _chargeRize <= parametr / 10;
             case 6:
-                return CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
+                return CurrentMap.IlluminationField.Values[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
             case 7:
-                return CurentMap.Illumination[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
+                return CurrentMap.IlluminationField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
             case 8:
-                return CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
+                return CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
             case 9:
-                return CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
+                return CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
             case 10:
-                return CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
+                return CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
             case 11:
-                return CurentMap.Organic[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
+                return CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
             case 12:
                 return _prevOperationSuccess;
             case 13:
                 return IsMoveAvaliable(_currentDirection, CurrentPosition);
             case 14:
-                return CurentMap.GetEatableObjects(CurrentPosition, 2).Count > 0;
+                return CurrentMap.GetEatableObjects(CurrentPosition, 2).Count > 0;
             default: 
                 return true;
         }
     }
 
-    public void SetGenom(Genome.Comand[] newGenome)
+    public void SetGenom(Genome.Comand[] inputGenome)
     {
+        Genome.Comand[] newGenome = new Genome.Comand[inputGenome.Length];
+        System.Array.Copy(inputGenome, newGenome, inputGenome.Length);
         _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour }, newGenome);
     }
     
@@ -239,8 +232,8 @@ public class Sprout : Creature
     public override void Kill()
     {
 
-        CurentMap.AddOrganic3x3(CurrentPosition, OrganicVolume);
-        CurentMap.AddEnergy3x3(CurrentPosition, OwnChatrge / 9);
+        CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
+        CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume / 9, 1);
 
         Destroy(gameObject);
 

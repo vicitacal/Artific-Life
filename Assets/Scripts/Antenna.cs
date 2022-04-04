@@ -13,24 +13,23 @@ public class Antenna : MiningCells
     }
     private void antennaTick()
     {
-        if (CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] >= 20)
+        int resivedCharge = CurrentMap.ChargeField.TakeCharge(CurrentPosition);
+        if (resivedCharge > 15)
         {
-            CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] -= 20;
-            EnergyStored += 18;
-            EnergyAccumulated += 2;
+            EnergyAccumulated += resivedCharge / 10;
+            EnergyStored += resivedCharge - EnergyAccumulated; 
         }
-        else if (CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] > 0)
+        else
         {
-            EnergyStored += CurentMap.Organic[CurrentPosition.x, CurrentPosition.y];
-            CurentMap.Charge[CurrentPosition.x, CurrentPosition.y] = 0;
+            EnergyStored += resivedCharge;
         }
-        OwnChatrge -= EnergySpend;
-        if (OwnChatrge <= 0) Kill();
+        OwnCharge -= EnergySpend;
+        if (OwnCharge <= 0) Kill();
     }
     public override void Kill()
     {
-        CurentMap.AddOrganic3x3(CurrentPosition, OrganicVolume / 9);
-        CurentMap.AddEnergy3x3(CurrentPosition, (EnergyStored + EnergyAccumulated + EnergyVolume) / 9);
+        CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
+        CurrentMap.ChargeField.AddToArea(CurrentPosition, (EnergyStored + EnergyAccumulated + ChargeVolume) / 9, 1);
         base.Kill();
     }
 }

@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 public class CameraControl : MonoBehaviour
 {
-    [SerializeField] private Text _statusText;
-    [SerializeField] private GameObject _UiGenomTextFeeld;
+    [SerializeField] UIController controllerUI;
     private Camera _camera;
     private Vector3 _mouseInput;
     private Transform _targetTransfotm;
@@ -36,6 +35,7 @@ public class CameraControl : MonoBehaviour
         _offset = new Vector3(_offset.x, _offset.y, -Mathf.Abs(_zoomMax) / 2);
         _mouseInput = transform.rotation.eulerAngles;
     }
+    
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl)) Cursor.visible = true;
@@ -66,7 +66,6 @@ public class CameraControl : MonoBehaviour
         {
             if (_targetTransfotm)
             {
-                printSproutDiscript();
                 orbitMove(_targetPivitPoint);
                 _targetPivitPoint += (_targetTransfotm.position - _targetPivitPoint) * Time.deltaTime * 5f;
             }
@@ -148,24 +147,13 @@ public class CameraControl : MonoBehaviour
         if (inVal)
         {
             _orbitX = -transform.localEulerAngles.x;
-            _UiGenomTextFeeld.SetActive(true);
+            controllerUI.ShowSproutDescript(_targetSprout);
         }
         else
         {
             _mouseInput = transform.rotation.eulerAngles;
-            _statusText.text = "";
-            _UiGenomTextFeeld.SetActive(false);
+            controllerUI.ShowSproutDescript(null);
         }
         _camMode = inVal;
-    }
-
-    private void printSproutDiscript()
-    {
-        _statusText.text = "";
-        _statusText.text += _targetSprout.Genome.GetDescription();
-        _statusText.text += "-----------\n";
-        _statusText.text += "Charge: " + _targetSprout.Charge + "\n";
-        _statusText.text += "Charge change: " + _targetSprout.ChargeChenge;
-
     }
 }
