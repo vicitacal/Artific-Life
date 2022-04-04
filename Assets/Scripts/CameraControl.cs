@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CameraControl : MonoBehaviour
 {
@@ -23,9 +20,11 @@ public class CameraControl : MonoBehaviour
     private float _zoom = 0.25f;
     private float _orbitY = 0;
     private float _orbitX = 0;
+    public static CameraControl Instance;
 
     private void Awake()
     {
+        Instance = this;
         _camera = GetComponent<Camera>();
         Cursor.visible = false;
     }

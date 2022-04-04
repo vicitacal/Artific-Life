@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
     [SerializeField] private Button _spawnButton;
+    [SerializeField] private Button _pauseButton;
+    [SerializeField] private Image _pauseButtonImage;
     [SerializeField] private Text _spawnCountText;
     [SerializeField] private Slider _sliderSpawnCount;
     [SerializeField] private Map _map;
@@ -15,14 +15,22 @@ public class UIController : MonoBehaviour
     [SerializeField] private Dropdown _viewModeSwicher;
     [SerializeField] private Text _statusText;
     [SerializeField] private GameObject _UiGenomTextFeeld;
+    [SerializeField] private Sprite _playButtonTexture;
+    [SerializeField] private Sprite _pauseButtonTexture;
     private bool _isRolled = true;
     private Sprout _targetSprout;
     private bool _isSproutSelected;
+    public static UIController Instance;
 
     private void Awake()
     {
-        _sliderSpawnCount.maxValue = (MapCreator.MapSixeX * MapCreator.MapSixeY) / 100;
+        Instance = this;
         _spawnCountText.text = "1";
+    }
+
+    private void OnEnable()
+    {
+        _sliderSpawnCount.maxValue = (MapCreator.MapSixeX * MapCreator.MapSixeY) / 100;
     }
 
     private void Update()
@@ -35,12 +43,26 @@ public class UIController : MonoBehaviour
             {
                 _isSproutSelected = false;
                 _UiGenomTextFeeld.SetActive(false);    
-            }
-                
+            }     
+        } 
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Pause();
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            CameraControl.Instance.enabled = false;
+            EscController.Instance.gameObject.SetActive(true);
+            gameObject.SetActive(false);
         }
-        
     }
 
+    public void Pause()
+    {
+        if (MapCreator.Instance.PauseGame())
+            _pauseButtonImage.overrideSprite = _playButtonTexture;
+        else
+            _pauseButtonImage.overrideSprite = _pauseButtonTexture;
+    }
     public void ChangeCountText()
     {
         _spawnCountText.text = _sliderSpawnCount.value.ToString();

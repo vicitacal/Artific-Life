@@ -23,6 +23,6 @@ public class MiningCells : Creature
     public int Eat()
     {
         _kill = true;
-        return EnergyStored + OwnCharge;
+        return EnergyStored + OwnCharge + EnergyAccumulated;
     }
 }

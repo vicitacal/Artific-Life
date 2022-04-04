@@ -10,23 +10,23 @@ public class Map : MonoBehaviour
     public Organic OrganicField;
     public Illumination IlluminationField;
     private Creature[,] _objectsOnMap = new Creature[MapCreator.MapSixeX, MapCreator.MapSixeY];
+    private int _objectsOnMapCount = 0;
     private Texture2D _texture;
     private ViewModes _viewMod;
+    private bool _isSpawned = false;
 
     private void Awake()
     {
-        ChargeField = new Charge(MapCreator.MapSixeX, MapCreator.MapSixeY);
-        OrganicField = new Organic(MapCreator.MapSixeX, MapCreator.MapSixeY);
-        IlluminationField = new Illumination(MapCreator.MapSixeX, MapCreator.MapSixeY);
-
-        MapCreator.Tick.AddListener(Tick);
-        TextureInit();
+        InitArrays();
+        InitTexture();
         SetViewMode(ViewModes.NormalMode);
         UpdateTexture();
+        MapCreator.Tick.AddListener(Tick);
     }
 
     public void InitMap()
     {
+        ClearArrays();
         IlluminationField.FillInCircle();
         UpdateTexture();
     }
@@ -35,6 +35,7 @@ public class Map : MonoBehaviour
     {
         ChargeField.Equalization();
         if (_viewMod != ViewModes.NormalMode) UpdateTexture();
+        if (_isSpawned && _objectsOnMapCount == 0) UIController.Instance.ClearScene();
     }
     
     public void CreateSprouts(int quantity)
@@ -58,6 +59,7 @@ public class Map : MonoBehaviour
                 curY += ofsetY;
             }
         }
+        _isSpawned = true;
     }
 
     public void SetViewMode(ViewModes mode)
@@ -81,6 +83,7 @@ public class Map : MonoBehaviour
         if (_objectsOnMap[newCoordinats.x, newCoordinats.y] == null)
         {
             _objectsOnMap[newCoordinats.x, newCoordinats.y] = newCreature;
+            _objectsOnMapCount++;
             return true;
         }
         return false;
@@ -89,6 +92,7 @@ public class Map : MonoBehaviour
     public void RemoveFromMap(Vector2Int removePosition)
     {
         _objectsOnMap[removePosition.x, removePosition.y] = null;
+        _objectsOnMapCount--;
     }
     
     public bool ChengeObjectPosition(Vector2Int objectPosition, Vector2Int newObjectPosition)
@@ -124,13 +128,26 @@ public class Map : MonoBehaviour
         {
             Destroy(creature.gameObject);
         }
+        _objectsOnMapCount = 0;
+        _isSpawned = false;
+    }
+
+    private void ClearArrays()
+    {
+        _objectsOnMap = new Creature[MapCreator.MapSixeX, MapCreator.MapSixeY];
         ChargeField.Clear();
         OrganicField.Clear();
         IlluminationField.Clear();
-        _objectsOnMap = new Creature[MapCreator.MapSixeX, MapCreator.MapSixeY];
+    }
+
+    public void InitArrays()
+    {
+        ChargeField = new Charge(MapCreator.MapSixeX, MapCreator.MapSixeY);
+        OrganicField = new Organic(MapCreator.MapSixeX, MapCreator.MapSixeY);
+        IlluminationField = new Illumination(MapCreator.MapSixeX, MapCreator.MapSixeY);
     }
     
-    private void TextureInit()
+    public void InitTexture()
     {
         _texture = new Texture2D(MapCreator.MapSixeX, MapCreator.MapSixeY);
         _texture.filterMode = FilterMode.Point;

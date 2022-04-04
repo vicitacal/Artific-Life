@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using UnityEngine;
 
 public class Organic : EnergyArray

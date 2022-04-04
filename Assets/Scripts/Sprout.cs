@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Sprout : Creature
 {
     public List<MiningCells> Childs = new List<MiningCells>();
-    public const int ChargeSpendPerStep = 25;
+    public const int ChargeSpendPerStep = 20;
 
     [SerializeField] private GameObject _tail;
     private Genome _genome;
@@ -25,7 +24,7 @@ public class Sprout : Creature
         base.Awake();
         _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour });
         MapCreator.Tick.AddListener(Tick);
-        OwnCharge = 1000;
+        OwnCharge = 1500;
     }
 
     private void Tick()
@@ -41,6 +40,7 @@ public class Sprout : Creature
                 else
                     OwnCharge += Childs[i].collectEnergy();
             }
+        if (Childs.Count == 0) ActivateTail(false);
         _prevOperationSuccess = _genome.PerformGene();
         OwnCharge -= ChargeSpendPerStep;
         _chargeRize = OwnCharge - _previousEnergy;
@@ -141,9 +141,9 @@ public class Sprout : Creature
                 spawnedCreature = Instantiate(MapCreator.CellsPrefubs[1], worldSpawnPos, calculatedRotation);
                 Sprout createdSprout = spawnedCreature.GetComponentInChildren<Sprout>();
                 createdSprout.SetGenom(_genome.Genes);
-                createdSprout.ActivateTail();
+                createdSprout.ActivateTail(true);
                 createdSprout.Childs = Childs;
-                spawnedCreature.GetComponent<Creature>().setStartEnergy(childDiscript.ChildCost + 50);
+                spawnedCreature.GetComponent<Creature>().setStartEnergy(childDiscript.ChildCost + 200);
             } 
             else
             {
@@ -223,20 +223,16 @@ public class Sprout : Creature
         _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour }, newGenome);
     }
     
-    private void ActivateTail()
+    private void ActivateTail(bool active)
     {
-        _isMultiCell = true;
-        _tail.gameObject.SetActive(true);
+        _isMultiCell = active;
+        _tail.gameObject.SetActive(active);
     }
 
     public override void Kill()
     {
-
         CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
         CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume / 9, 1);
-
-        Destroy(gameObject);
-
+        base.Kill();
     }
-    
 }

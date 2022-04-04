@@ -12,7 +12,7 @@ public class Illumination : EnergyArray
         for (int x = 0; x < MapCreator.MapSixeX; x++)
             for (int y = 0; y < MapCreator.MapSixeY; y++)
             {
-                MainData[x, y] = (int)(Mathf.Sin((float)x / MapCreator.MapSixeX * Mathf.PI) * Mathf.Sin((float)y / MapCreator.MapSixeY * Mathf.PI) * 50);
+                MainData[x, y] = (int)(Mathf.Sin((float)x / MapCreator.MapSixeX * Mathf.PI) * Mathf.Sin((float)y / MapCreator.MapSixeY * Mathf.PI) * 65);
             }
     }
 

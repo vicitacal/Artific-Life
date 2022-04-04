@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,17 +9,20 @@ public class MapCreator : MonoBehaviour
     [SerializeField] private GameObject _Leaf;
     [SerializeField] private GameObject _Root;
     [SerializeField] private GameObject _Wood;
-    public static int MapSixeX { get; private set; } = 100; //2800;
-    public static int MapSixeY { get; private set; } = 100; //1400;
+    public static int MapSixeX = 100;
+    public static int MapSixeY = 100;
     public static GameObject[] CellsPrefubs { get; private set; }
     public static UnityEvent Tick = new UnityEvent();
     private static float _tickPeriod = 0.5f;
     private GameObject _gameField;
     private Map _map;
-    private Coroutine _tickCorotine;
+    private static bool _isPaused = false;
+    private static Coroutine _tickCorotine;
+    public static MapCreator Instance;
 
     private void Awake()
     {
+        Instance = this;
         InitMap();
         CellsPrefubs = new GameObject[] {null, _MainCreature, _Antenna, _Leaf, _Root, _Wood};
         _tickCorotine = StartCoroutine(EventTick());
@@ -40,6 +42,16 @@ public class MapCreator : MonoBehaviour
     public static void SetTickPeriod(float newTick)
     {
         _tickPeriod = newTick;
+    }
+
+    public bool PauseGame()
+    {
+        if (_isPaused)
+            _tickCorotine = StartCoroutine(EventTick());
+        else
+            StopCoroutine(_tickCorotine);
+        _isPaused = !_isPaused;
+        return _isPaused;
     }
 
     private IEnumerator EventTick() //По хорошему, перенести куда то в более подходящий класс
