@@ -4,31 +4,78 @@ using UnityEngine;
 
 public class Map : MonoBehaviour
 {
+    [SerializeField] private Gradient _organicGradient;
+    [SerializeField] private Gradient _energyGradient;
+    [SerializeField] private Gradient _illuminationGradient;
     public int[,] Charge = new int[MapCreator.MapSixeX, MapCreator.MapSixeY];
     public int[,] Organic = new int[MapCreator.MapSixeX, MapCreator.MapSixeY];
     public int[,] Illumination = new int[MapCreator.MapSixeX, MapCreator.MapSixeY];
     private Creature[,] _objectsOnMap = new Creature[MapCreator.MapSixeX, MapCreator.MapSixeY];
+    private Texture2D _texture;
+    private ViewModes _viewMod;
 
     private void Awake()
     {
-        for (int i = 0; i < MapCreator.MapSixeX; i++)
-            for (int j = 0; j < MapCreator.MapSixeY; j++)
-            {
-                Illumination[i, j] = (int)(Mathf.Sin((float)i / MapCreator.MapSixeX * Mathf.PI) * Mathf.Sin((float)j / MapCreator.MapSixeY * Mathf.PI) * 50);
-                Charge[i, j] = 10;
-            }
         MapCreator.Tick.AddListener(Tick);
+        _texture = new Texture2D(MapCreator.MapSixeX, MapCreator.MapSixeY);
+        _texture.filterMode = FilterMode.Point;
+        Material[] objectMaterial = gameObject.GetComponent<Renderer>().materials;
+        if(objectMaterial.Length > 1) objectMaterial[1].mainTexture = _texture;
+        SetViewMode(ViewModes.NormalMode);
+        UpdateTexture();
+    }
+
+    public void InitMap()
+    {
+        for (int x = 0; x < MapCreator.MapSixeX; x++)
+            for (int y = 0; y < MapCreator.MapSixeY; y++)
+            {
+                Illumination[x, y] = (int)(Mathf.Sin((float)x / MapCreator.MapSixeX * Mathf.PI) * Mathf.Sin((float)y / MapCreator.MapSixeY * Mathf.PI) * 50);
+                Charge[x, y] = 10;
+            }
+        UpdateTexture();
     }
 
     private void Tick()
     {
-        for (int i = 0; i < MapCreator.MapSixeX; i++)
-            for (int j = 0; j < MapCreator.MapSixeY; j++)
+        for (int x = 0; x < MapCreator.MapSixeX; x++)
+            for (int y = 0; y < MapCreator.MapSixeY; y++)
             {
-                if (Charge[i, j] > 100) Charge[i, j]--;
-                if (Charge[i, j] < 100) Charge[i, j]++;
+                if (Charge[x, y] > 100) Charge[x, y]--;
+                if (Charge[x, y] < 100) Charge[x, y]++;
             }
+        if(_viewMod != ViewModes.NormalMode) UpdateTexture();
     }
+
+    public void SetViewMode(ViewModes mode)
+    {
+        _viewMod = mode;
+        UpdateTexture();
+    }
+
+    private void UpdateTexture()
+    {
+        Color color = Color.white;
+        for (int x = 0; x < MapCreator.MapSixeX; x++)
+            for (int y = 0; y < MapCreator.MapSixeY; y++)
+            {
+                switch (_viewMod)
+                {
+                    case ViewModes.IlluminationMode:
+                        color = _illuminationGradient.Evaluate(Illumination[x, y] / 50f);
+                        break;
+                    case ViewModes.OrganicMode:
+                        color = _organicGradient.Evaluate(Organic[x, y] / 500f);
+                        break;
+                    case ViewModes.ChargeMode:
+                        color = _energyGradient.Evaluate(Charge[x, y] / 500f);
+                        break;
+                }
+                _texture.SetPixel(x, y, color);
+            }
+        _texture.Apply();
+    }
+    
     public bool IsPositionAvailable(Vector2Int posToTest)
     {
         if (posToTest.x < 0 || posToTest.y < 0 || posToTest.x > MapCreator.MapSixeX - 1 || posToTest.y > MapCreator.MapSixeY - 1)
@@ -72,7 +119,7 @@ public class Map : MonoBehaviour
         var toY = Mathf.Clamp(posToAdd.y + 1, 0, MapCreator.MapSixeY);
         for (int i = fromX; i < toX; i++)
             for (int j = fromY; j < toY; j++)
-                Charge[i, j] += value;
+                Organic[i, j] += value;
     }
 
     public void AddEnergy3x3(Vector2Int position, int value)

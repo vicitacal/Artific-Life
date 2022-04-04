@@ -8,8 +8,8 @@ public class Creature : MonoBehaviour
     protected Vector2Int CurrentPosition;
     protected int OwnChatrge;
     protected int EnergySpend;
-    protected static readonly int OrganicVolume = 50;
-    protected static readonly int EnergyVolume = 30;
+    protected static readonly int OrganicVolume = 90;
+    protected static readonly int EnergyVolume = 40;
     protected static Map CurentMap;
     private bool _energyWasSet = false;
 

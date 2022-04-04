@@ -15,7 +15,7 @@ public class CameraControl : MonoBehaviour
     private Vector3 _offset;
     private readonly float MaxX = MapCreator.MapSixeX;
     private readonly float MaxZ = MapCreator.MapSixeY;
-    private readonly float MaxY = 20;
+    private readonly float MaxY = 30;
     private bool _camMode = false;
     private const float _zoomMax = 8;
     private const float _zoomMin = 1;
@@ -43,6 +43,7 @@ public class CameraControl : MonoBehaviour
         if (Input.GetMouseButtonDown(1)) setCamMode(false);
         if (Input.GetKey(KeyCode.LeftControl))
         {
+            Cursor.lockState = CursorLockMode.None;
             if (Input.GetMouseButtonDown(0))
             {
                 if (tryGetSproutTransform(ref _targetTransfotm))
@@ -54,6 +55,7 @@ public class CameraControl : MonoBehaviour
         }
         else
         {
+            Cursor.lockState = CursorLockMode.Locked;
             if (_camMode)
                 orbitRotate();
             else
@@ -86,19 +88,19 @@ public class CameraControl : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         {
-            applyPosition(transform.position + transform.forward * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? 5f : 2f));
+            applyPosition(transform.position + transform.forward * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? 15f : 5f));
         }
         if (Input.GetKey(KeyCode.S))
         {
-            applyPosition(transform.position + transform.forward * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? -5f : -2f));
+            applyPosition(transform.position + transform.forward * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? -15f : -5f));
         }
         if (Input.GetKey(KeyCode.A))
         {
-            applyPosition(transform.position + transform.right * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? -5f : -2f));
+            applyPosition(transform.position + transform.right * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? -15f : -5f));
         }
         if (Input.GetKey(KeyCode.D))
         {
-            applyPosition(transform.position + transform.right * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? 5f : 2f));
+            applyPosition(transform.position + transform.right * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? 15f : 5f));
         }
     }
     

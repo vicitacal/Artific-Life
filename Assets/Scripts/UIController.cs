@@ -12,6 +12,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private RectTransform _buttonImageTransform;
     [SerializeField] private RectTransform _descriptionTransform;
     [SerializeField] private Slider _sliderTime;
+    [SerializeField] private Dropdown _viewModeSwicher;
     private bool _isRolled = true;
 
     private void Awake()
@@ -25,6 +26,7 @@ public class UIController : MonoBehaviour
     }
     public void CallSpawner()
     {
+        _map.InitMap();
         _map.CreateSprouts(Mathf.FloorToInt(_sliderSpawnCount.value));
         _spawnButton.interactable = false;
     }
@@ -51,8 +53,13 @@ public class UIController : MonoBehaviour
 
     public void ClearScene()
     {
-        FindObjectOfType<Map>().ClearMap();
+        _map.ClearMap();
         _spawnButton.interactable = true;
+    }
+
+    public void SwichViewMode()
+    {
+        _map.SetViewMode((ViewModes)_viewModeSwicher.value);
     }
 
 }
