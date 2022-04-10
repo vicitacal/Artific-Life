@@ -30,6 +30,7 @@ public class Root : MiningCells
     {
         CurrentMap.OrganicField.AddToArea(CurrentPosition, (EnergyAccumulated + EnergyStored) / 9, 1);
         CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume / 9, 1);
+        MapCreator.Tick.RemoveListener(rootTick);
         base.Kill();
     }
 }

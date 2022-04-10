@@ -32,7 +32,7 @@ public class MapCreator : MonoBehaviour
     {
         _gameField = transform.GetComponentInChildren<Map>().gameObject;
         _gameField.transform.localScale = new Vector3(MapSixeX, MapSixeY, 1);
-        _gameField.transform.position = new Vector3(MapSixeX/2 - 0.5f, 0, MapSixeY/2 - 0.5f);
+        _gameField.transform.position = new Vector3(MapSixeX/2f - 0.5f, 0, MapSixeY/2f - 0.5f);
         _gameField.GetComponent<Renderer>().material.mainTextureScale = new Vector2(MapSixeX, MapSixeY);
         _map = _gameField.GetComponent<Map>();
 

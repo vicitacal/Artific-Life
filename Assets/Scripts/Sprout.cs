@@ -3,18 +3,20 @@ using UnityEngine;
 
 public class Sprout : Creature
 {
-    public List<MiningCells> Childs = new List<MiningCells>();
-    public const int ChargeSpendPerStep = 20;
-
     [SerializeField] private GameObject _tail;
+    private MeshRenderer _head;
+    private List<MiningCells> Childs = new List<MiningCells>();
     private Genome _genome;
     private DirectionsDescript _currentDirection;
+    private const int _sleepChargeSpend = 2;
+    private const int _defaultChargeSpend = 20;
+    private int _chargeSpendPerStep = 20;
     private int _chargeRize = 0;
     private int _previousEnergy = 0;
     private bool _isMultiCell = false;
     private bool _firstChld = false;
     private bool _prevOperationSuccess = false;
-
+    private bool _sleeping = false;
     public int Charge => OwnCharge;
     public int ChargeChenge => _chargeRize;
     public Genome Genome => _genome;
@@ -22,31 +24,32 @@ public class Sprout : Creature
     protected override void Awake()
     {
         base.Awake();
-        _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour });
+        _head = GetComponentInChildren<MeshRenderer>();
+        _genome = new Genome(this, new List<Genome.Gene> {EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour, Sleep});
         MapCreator.Tick.AddListener(Tick);
         OwnCharge = 1500;
     }
 
     private void Tick()
-    {
-        if (Childs != null)
-            for (int i = 0; i < Childs.Count; i++)
-            {
-                if (Childs[i] == null)
-                {
-                    Childs.RemoveAt(i);
-                    i--;
-                }
-                else
-                    OwnCharge += Childs[i].collectEnergy();
-            }
-        if (Childs.Count == 0) ActivateTail(false);
-        _prevOperationSuccess = _genome.PerformGene();
-        OwnCharge -= ChargeSpendPerStep;
+    { 
+        Childs.RemoveAll(x => x == null);
+        foreach (var child in Childs) OwnCharge += child.collectEnergy();
+        if (Childs.Count == 0)
+        {
+            ActivateTail(false);
+            _sleeping = false;
+            _chargeSpendPerStep = _defaultChargeSpend;
+            _head.material.color = Color.white;
+        }
+        if (!_sleeping)
+        {
+            _prevOperationSuccess = _genome.PerformGene();
+            _genome.MutateGenome(0.8f);
+        }
+        OwnCharge -= _chargeSpendPerStep;
         _chargeRize = OwnCharge - _previousEnergy;
         _previousEnergy = OwnCharge;
         if (OwnCharge <= 0) Kill();
-        _genome.MutateGenome(0.8f);
     }
     
     private bool CreateChilds(Genome.Comand inputComand)
@@ -86,6 +89,18 @@ public class Sprout : Creature
         comand.MoveDirection = inDirection;
         comand.FirstChild.ChildCost = stickCost;
         return Move(comand);
+    }
+
+    private bool Sleep(Genome.Comand inputComand)
+    {
+        if (_isMultiCell)
+        {
+            _sleeping = true;
+            _chargeSpendPerStep = _sleepChargeSpend;
+            _head.material.color = new Color(0.52f, 0.12f, 0);
+            return true;
+        }
+        return false;
     }
 
     private bool EatOrganic(Genome.Comand inputComand)
@@ -133,7 +148,7 @@ public class Sprout : Creature
 
         if (!CurrentMap.IsPositionAvailable(mapSpawnPos)) return false;
 
-        if (OwnCharge > childDiscript.ChildCost + ChargeSpendPerStep)
+        if (OwnCharge > childDiscript.ChildCost + _chargeSpendPerStep)
         {
             OwnCharge -= childDiscript.ChildCost;
             if (childDiscript.ChildType == 1)
@@ -142,16 +157,14 @@ public class Sprout : Creature
                 Sprout createdSprout = spawnedCreature.GetComponentInChildren<Sprout>();
                 createdSprout.SetGenom(_genome.Genes);
                 createdSprout.ActivateTail(true);
-                createdSprout.Childs = Childs;
-                spawnedCreature.GetComponent<Creature>().setStartEnergy(childDiscript.ChildCost + 200);
             } 
             else
             {
                 spawnedCreature = Instantiate(MapCreator.CellsPrefubs[childDiscript.ChildType], worldSpawnPos, calculatedRotation);
                 spawnedCreature.GetComponent<Creature>().CellType = childDiscript.ChildType;
                 Childs.Add(spawnedCreature.GetComponentInChildren<MiningCells>());
-                spawnedCreature.GetComponent<Creature>().setStartEnergy(childDiscript.ChildCost);
             }
+            spawnedCreature.GetComponent<Creature>().setStartEnergy(childDiscript.ChildCost);
             _firstChld = true;
             isCreated = true;
         }
@@ -218,9 +231,12 @@ public class Sprout : Creature
 
     public void SetGenom(Genome.Comand[] inputGenome)
     {
-        Genome.Comand[] newGenome = new Genome.Comand[inputGenome.Length];
-        System.Array.Copy(inputGenome, newGenome, inputGenome.Length);
-        _genome = new Genome(this, new List<Genome.Gene> { EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour }, newGenome);
+        _genome.SetGenom(inputGenome);
+    }
+    
+    public void ReceiveEnergy(int energy)
+    {
+        OwnCharge += energy;
     }
     
     private void ActivateTail(bool active)
@@ -235,4 +251,5 @@ public class Sprout : Creature
         CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume / 9, 1);
         base.Kill();
     }
+
 }

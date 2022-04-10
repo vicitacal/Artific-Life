@@ -30,6 +30,7 @@ public class EscController : MonoBehaviour
         MapCreator.MapSixeX = Mathf.Clamp(System.Convert.ToInt32(_inputX.text), 4, 2000);
         MapCreator.MapSixeY = Mathf.Clamp(System.Convert.ToInt32(_inputY.text), 4, 1500);
         MapCreator.Instance.InitMap();
+        CameraControl.Instance.UpdateMapSize();
         map.InitArrays();
         map.ClearMap();
         map.InitMap();

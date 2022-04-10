@@ -30,6 +30,7 @@ public class Antenna : MiningCells
     {
         CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
         CurrentMap.ChargeField.AddToArea(CurrentPosition, (EnergyStored + EnergyAccumulated + ChargeVolume) / 9, 1);
+        MapCreator.Tick.RemoveListener(antennaTick);
         base.Kill();
     }
 }

@@ -222,8 +222,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CellType: 1
-  Childs: []
   _tail: {fileID: 8120626408276652244}
+  _material: {fileID: 2100000, guid: 85efcb423f359204f931a4555822f630, type: 2}
 --- !u!1 &8120626408276652244
 GameObject:
   m_ObjectHideFlags: 0

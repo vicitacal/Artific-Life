@@ -6,13 +6,13 @@ public class Leaf : MiningCells
     protected override void Awake()
     {
         base.Awake();
-        EnergySpend = 15;
+        EnergySpend = 13;
         MapCreator.Tick.AddListener(leafTick);
     }
     private void leafTick()
     {
         int resivedCharge = CurrentMap.IlluminationField.pickValue(CurrentPosition);
-        EnergySpend += resivedCharge;
+        EnergyStored += resivedCharge;
         if (resivedCharge > 2)
         { 
             EnergyAccumulated += 1;
@@ -24,6 +24,7 @@ public class Leaf : MiningCells
     {
         CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
         CurrentMap.ChargeField.AddToArea(CurrentPosition, (EnergyStored + EnergyAccumulated) / 9, 1);
+        MapCreator.Tick.RemoveListener(leafTick);
         base.Kill();
     }
 }

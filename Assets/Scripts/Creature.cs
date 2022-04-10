@@ -4,11 +4,12 @@ public class Creature : MonoBehaviour
 {
     [HideInInspector] public int CellType = 1;
     protected Vector2Int CurrentPosition;
+    protected Creature Parent;
+    protected static Map CurrentMap;
     protected int OwnCharge;
     protected int EnergySpend;
     protected static readonly int OrganicVolume = 90;
     protected static readonly int ChargeVolume = 40;
-    protected static Map CurrentMap;
     private bool _energyWasSet = false;
 
     public Vector2Int Position => CurrentPosition;

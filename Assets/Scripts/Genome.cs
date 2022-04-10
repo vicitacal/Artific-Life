@@ -18,7 +18,7 @@ public class Genome
     {
         _parent = parent;
         _genePool = new List<Gene>(genePool);
-        _genom = comands;
+        comands.CopyTo(_genom, 0);
     }
     public struct ChildPlase
     {
@@ -156,7 +156,7 @@ public class Genome
         public static Comand getRandomComand()
         {
             Comand newRandomComand = new Comand();
-            newRandomComand.ComandId = (byte)Random.Range(0, 5);
+            newRandomComand.ComandId = (byte)Random.Range(0, 6);
             newRandomComand.MoveDirection = new DirectionsDescript((byte)Random.Range(0, 4));
             newRandomComand.Condition = (byte)Random.Range(0, 16);
             newRandomComand.ConditionArgument = (byte)Random.Range(0, 500);
@@ -267,5 +267,10 @@ public class Genome
             description += " Jump:" + _genom[i].Transition + "\n";
         }
         return description;
+    }
+
+    public void SetGenom(Comand[] inputGenome)
+    {
+        inputGenome.CopyTo(_genom, 0);
     }
 }
