@@ -108,16 +108,16 @@ public class Map : MonoBehaviour
     public List<Creature> GetEatableObjects(Vector2Int position, int radius)
     {
         List<Creature> EatableObjects = new List<Creature>();
-        var fromX = Mathf.Clamp(position.x - radius, 0, MapCreator.MapSixeX);
-        var toX = Mathf.Clamp(position.x + radius, 0, MapCreator.MapSixeX);
-        var fromY = Mathf.Clamp(position.y - radius, 0, MapCreator.MapSixeY);
-        var toY = Mathf.Clamp(position.y + radius, 0, MapCreator.MapSixeY);
-        for (int i = fromX; i < toX; i++)
-            for (int j = fromY; j < toY; j++)
-                if (_objectsOnMap[i, j] != null && _objectsOnMap[i, j].CellType < 5)
+        for (int i = position.x - radius; i < position.x + radius; i++)
+            for (int j = position.y - radius; j < position.y + radius; j++)
+            {
+                int x = GeneralPurpose.CutToMapSize(i);
+                int y = GeneralPurpose.CutToMapSize(j);
+                if (_objectsOnMap[x, y] != null && _objectsOnMap[x, y].CellType < 5 && i != position.x && j != position.y)
                 {
-                    EatableObjects.Add(_objectsOnMap[i, j]);
+                    EatableObjects.Add(_objectsOnMap[x, y]);
                 }
+            }
         return EatableObjects;
     }
 

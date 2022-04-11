@@ -35,39 +35,39 @@ public class Genome
                     switch (curDir)
                     {
                         case DirectionsDescript.Directions.left:
-                            return new Vector2Int(CurPos.x, CurPos.y - 1);
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y - 1));
                         case DirectionsDescript.Directions.up:
-                            return new Vector2Int(CurPos.x - 1, CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x - 1), CurPos.y);
                         case DirectionsDescript.Directions.right:
-                            return new Vector2Int(CurPos.x, CurPos.y + 1);
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y + 1));
                         case DirectionsDescript.Directions.down:
-                            return new Vector2Int(CurPos.x + 1, CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x + 1), CurPos.y);
                     }
                     break;
                 case AvaliableOrdinal.secondPos:
                     switch (curDir)
                     {
                         case DirectionsDescript.Directions.left:
-                            return new Vector2Int(CurPos.x + 1, CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x + 1), CurPos.y);
                         case DirectionsDescript.Directions.up:
-                            return new Vector2Int(CurPos.x, CurPos.y - 1);
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y - 1));
                         case DirectionsDescript.Directions.right:
-                            return new Vector2Int(CurPos.x - 1, CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x - 1), CurPos.y);
                         case DirectionsDescript.Directions.down:
-                            return new Vector2Int(CurPos.x, CurPos.y + 1);
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y + 1));
                     }
                     break;
                 case AvaliableOrdinal.thirdPos:
                     switch (curDir)
                     {
                         case DirectionsDescript.Directions.left:
-                            return new Vector2Int(CurPos.x, CurPos.y + 1);
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y + 1));
                         case DirectionsDescript.Directions.up:
-                            return new Vector2Int(CurPos.x + 1, CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x + 1), CurPos.y);
                         case DirectionsDescript.Directions.right:
-                            return new Vector2Int(CurPos.x, CurPos.y - 1);
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y - 1));
                         case DirectionsDescript.Directions.down:
-                            return new Vector2Int(CurPos.x - 1, CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x - 1), CurPos.y);
                     }
                     break;
             }
@@ -164,16 +164,16 @@ public class Genome
             newRandomComand.SecondChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.secondPos);
             newRandomComand.ThirdChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.thirdPos);
             newRandomComand.Transition = (byte)Random.Range(0, GenomeLenght);
-            newRandomComand.FirstChild.ChildCost = newRandomComand.FirstChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
-            newRandomComand.SecondChild.ChildCost = newRandomComand.SecondChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
-            newRandomComand.ThirdChild.ChildCost = newRandomComand.ThirdChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
+            newRandomComand.FirstChild.ChildCost = newRandomComand.FirstChild.ChildType == 1 ? Random.Range(200, 450) : Random.Range(50, 200);
+            newRandomComand.SecondChild.ChildCost = newRandomComand.SecondChild.ChildType == 1 ? Random.Range(200, 450) : Random.Range(50, 200);
+            newRandomComand.ThirdChild.ChildCost = newRandomComand.ThirdChild.ChildType == 1 ? Random.Range(200, 450) : Random.Range(50, 200);
             return newRandomComand;
         }
     }
 
     public const int GenomeLenght = 24;
     public delegate bool Gene(Comand value);
-    private int _performingOperationNum = 0;
+    public int PerformingOperationNum = 0;
     private Sprout _parent;
     private List<Gene> _genePool = new List<Gene>();
     private Comand[] _genom = new Comand[GenomeLenght];
@@ -245,15 +245,15 @@ public class Genome
     public bool PerformGene()
     {
         bool operationSucsess;
-        Comand curentComand = _genom[_performingOperationNum];
+        Comand curentComand = _genom[PerformingOperationNum];
         if (!_parent.CheckCondition(curentComand))
         {
-            _performingOperationNum = curentComand.Transition;
-            curentComand = _genom[_performingOperationNum];
+            PerformingOperationNum = curentComand.Transition;
+            curentComand = _genom[PerformingOperationNum];
         }
 
         operationSucsess = _genePool[curentComand.ComandId](curentComand);
-        _performingOperationNum = curentComand.Transition;
+        PerformingOperationNum = curentComand.Transition;
         return operationSucsess;
     }
 
@@ -263,7 +263,7 @@ public class Genome
 
         for (int i = 0; i < _genom.Length; i++)
         {
-            description += i == _performingOperationNum ? ">" : "  ";
+            description += i == PerformingOperationNum ? ">" : "  ";
             description += i + ") id:" + _genom[i].ComandId + " Dir:" + _genom[i].MoveDirection.direction + " Cond:" + _genom[i].Condition + " Arg:" + _genom[i].ConditionArgument;
             description += " C1:" + _genom[i].FirstChild.ChildType + " Cost:" + _genom[i].FirstChild.ChildCost + " C2:" + _genom[i].SecondChild.ChildType;
             description += " Cost:" + _genom[i].SecondChild.ChildCost + " C3:" + _genom[i].ThirdChild.ChildType + " Cost:" + _genom[i].ThirdChild.ChildCost;

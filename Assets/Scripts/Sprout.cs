@@ -148,21 +148,17 @@ public class Sprout : Creature
 
         if (!CurrentMap.IsPositionAvailable(mapSpawnPos)) return false;
 
-        if (OwnCharge > childDiscript.ChildCost + _chargeSpendPerStep)
+        if (OwnCharge > childDiscript.ChildCost + _chargeSpendPerStep * 2)
         {
             OwnCharge -= childDiscript.ChildCost;
             spawnetObject = Instantiate(MapCreator.CellsPrefubs[childDiscript.ChildType], worldSpawnPos, calculatedRotation);
             spawnedCreature = spawnetObject.GetComponent<Creature>();
             spawnedCreature.setStartEnergy(childDiscript.ChildCost);
+            spawnedCreature.Parent = this;
             if (childDiscript.ChildType == 1)
-            {
-                spawnetObject.GetComponentInChildren<Sprout>().SetGenom(_genome.Genes);
-            }
+                spawnetObject.GetComponentInChildren<Sprout>().SetGenom(_genome.Genes, _genome.PerformingOperationNum);
             else
-            {
-                spawnedCreature.Parent = this;
                 ChildsCount++;
-            }
             _firstChld = true;
             isCreated = true;
         }
@@ -227,9 +223,10 @@ public class Sprout : Creature
         }
     }
 
-    public void SetGenom(Genome.Comand[] inputGenome)
+    public void SetGenom(Genome.Comand[] inputGenome, int performOp)
     {
         _genome.SetGenom(inputGenome);
+        _genome.PerformingOperationNum = performOp;
     }
     
     public void ReceiveEnergy(int energy)
@@ -241,13 +238,6 @@ public class Sprout : Creature
     {
         _isMultiCell = active;
         _tail.gameObject.SetActive(active);
-    }
-
-    public override void Kill()
-    {
-        CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
-        CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume / 9, 1);
-        base.Kill();
     }
 
 }
