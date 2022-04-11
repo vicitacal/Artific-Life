@@ -5,11 +5,11 @@ public class Sprout : Creature
 {
     [SerializeField] private GameObject _tail;
     private MeshRenderer _head;
-    private List<MiningCells> Childs = new List<MiningCells>();
     private Genome _genome;
     private DirectionsDescript _currentDirection;
     private const int _sleepChargeSpend = 2;
     private const int _defaultChargeSpend = 20;
+    [HideInInspector] public int ChildsCount = 0;
     private int _chargeSpendPerStep = 20;
     private int _chargeRize = 0;
     private int _previousEnergy = 0;
@@ -32,9 +32,7 @@ public class Sprout : Creature
 
     private void Tick()
     { 
-        Childs.RemoveAll(x => x == null);
-        foreach (var child in Childs) OwnCharge += child.collectEnergy();
-        if (Childs.Count == 0)
+        if (ChildsCount == 0)
         {
             ActivateTail(false);
             _sleeping = false;
@@ -125,12 +123,13 @@ public class Sprout : Creature
         List<Creature> eatableObject = CurrentMap.GetEatableObjects(CurrentPosition, 2);
         while (eatableObject.Count > 0) {
             var eatIndex = Random.Range(0, eatableObject.Count);
-            if (Childs.Contains((MiningCells)eatableObject[eatIndex]))
+            if (eatableObject[eatIndex].Parent == this)
+            {
                 eatableObject.RemoveAt(eatIndex);
+            }
             else
             {
-                MiningCells CellToEat = (MiningCells)eatableObject[eatIndex];
-                OwnCharge += CellToEat.Eat();
+                OwnCharge += eatableObject[eatIndex].Eat();
                 return true;
             }
         }
@@ -143,7 +142,8 @@ public class Sprout : Creature
         Vector2Int mapSpawnPos = childDiscript.Position.getChildCord(CurrentPosition, _currentDirection.direction);
         Vector3 worldSpawnPos = new Vector3(mapSpawnPos.x, 0, mapSpawnPos.y);
         Quaternion calculatedRotation = CalculateRotation(childDiscript.Position.getChildDirection(_currentDirection.direction));
-        GameObject spawnedCreature;
+        GameObject spawnetObject;
+        Creature spawnedCreature;
         bool isCreated = false;
 
         if (!CurrentMap.IsPositionAvailable(mapSpawnPos)) return false;
@@ -151,20 +151,18 @@ public class Sprout : Creature
         if (OwnCharge > childDiscript.ChildCost + _chargeSpendPerStep)
         {
             OwnCharge -= childDiscript.ChildCost;
+            spawnetObject = Instantiate(MapCreator.CellsPrefubs[childDiscript.ChildType], worldSpawnPos, calculatedRotation);
+            spawnedCreature = spawnetObject.GetComponent<Creature>();
+            spawnedCreature.setStartEnergy(childDiscript.ChildCost);
             if (childDiscript.ChildType == 1)
             {
-                spawnedCreature = Instantiate(MapCreator.CellsPrefubs[1], worldSpawnPos, calculatedRotation);
-                Sprout createdSprout = spawnedCreature.GetComponentInChildren<Sprout>();
-                createdSprout.SetGenom(_genome.Genes);
-                createdSprout.ActivateTail(true);
-            } 
+                spawnetObject.GetComponentInChildren<Sprout>().SetGenom(_genome.Genes);
+            }
             else
             {
-                spawnedCreature = Instantiate(MapCreator.CellsPrefubs[childDiscript.ChildType], worldSpawnPos, calculatedRotation);
-                spawnedCreature.GetComponent<Creature>().CellType = childDiscript.ChildType;
-                Childs.Add(spawnedCreature.GetComponentInChildren<MiningCells>());
+                spawnedCreature.Parent = this;
+                ChildsCount++;
             }
-            spawnedCreature.GetComponent<Creature>().setStartEnergy(childDiscript.ChildCost);
             _firstChld = true;
             isCreated = true;
         }

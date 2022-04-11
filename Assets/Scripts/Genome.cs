@@ -160,10 +160,13 @@ public class Genome
             newRandomComand.MoveDirection = new DirectionsDescript((byte)Random.Range(0, 4));
             newRandomComand.Condition = (byte)Random.Range(0, 16);
             newRandomComand.ConditionArgument = (byte)Random.Range(0, 500);
-            newRandomComand.FirstChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(50, 400), ChildPlase.AvaliableOrdinal.firstPos);
-            newRandomComand.SecondChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(50, 400), ChildPlase.AvaliableOrdinal.secondPos);
-            newRandomComand.ThirdChild = new ChildDiscript((byte)Random.Range(0, 5), (byte)Random.Range(50, 400), ChildPlase.AvaliableOrdinal.thirdPos);
+            newRandomComand.FirstChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.firstPos);
+            newRandomComand.SecondChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.secondPos);
+            newRandomComand.ThirdChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.thirdPos);
             newRandomComand.Transition = (byte)Random.Range(0, GenomeLenght);
+            newRandomComand.FirstChild.ChildCost = newRandomComand.FirstChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
+            newRandomComand.SecondChild.ChildCost = newRandomComand.SecondChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
+            newRandomComand.ThirdChild.ChildCost = newRandomComand.ThirdChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
             return newRandomComand;
         }
     }
@@ -184,16 +187,16 @@ public class Genome
         switch (Random.Range(1, 9))
         {
             case 1:
-                _genom[geneToChenge].ComandId = (byte)Random.Range(0, 3);
+                _genom[geneToChenge].ComandId = (byte)Random.Range(0, 6);
                 break;
             case 2:
                 _genom[geneToChenge].MoveDirection = new DirectionsDescript((byte)Random.Range(0, 4));
                 break;
             case 3:
-                _genom[geneToChenge].Condition = (byte)Random.Range(0, 33);
+                _genom[geneToChenge].Condition = (byte)Random.Range(0, 16);
                 break;
             case 4:
-                _genom[geneToChenge].ConditionArgument = (byte)Random.Range(0, 51);
+                _genom[geneToChenge].ConditionArgument = (byte)Random.Range(0, 500);
                 break;
             case 5:
                 switch (Random.Range(1, 3))
@@ -202,7 +205,7 @@ public class Genome
                         _genom[geneToChenge].FirstChild.ChildType = (byte)Random.Range(0, 5);
                         break;
                     case 2:
-                        _genom[geneToChenge].FirstChild.ChildCost = (byte)Random.Range(12, 61);
+                        _genom[geneToChenge].FirstChild.ChildCost = _genom[geneToChenge].FirstChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
                         break;
                 }
                 break;
@@ -213,7 +216,7 @@ public class Genome
                         _genom[geneToChenge].SecondChild.ChildType = (byte)Random.Range(0, 5);
                         break;
                     case 2:
-                        _genom[geneToChenge].SecondChild.ChildCost = (byte)Random.Range(12, 61);
+                        _genom[geneToChenge].SecondChild.ChildCost = _genom[geneToChenge].SecondChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
                         break;
                 }
                 break;
@@ -224,7 +227,7 @@ public class Genome
                         _genom[geneToChenge].ThirdChild.ChildType = (byte)Random.Range(0, 5);
                         break;
                     case 2:
-                        _genom[geneToChenge].ThirdChild.ChildCost = (byte)Random.Range(12, 61);
+                        _genom[geneToChenge].ThirdChild.ChildCost = _genom[geneToChenge].ThirdChild.ChildType == 1 ? Random.Range(150, 450) : Random.Range(50, 350);
                         break;
                 }
                 break;

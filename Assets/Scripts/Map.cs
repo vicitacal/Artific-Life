@@ -114,7 +114,7 @@ public class Map : MonoBehaviour
         var toY = Mathf.Clamp(position.y + radius, 0, MapCreator.MapSixeY);
         for (int i = fromX; i < toX; i++)
             for (int j = fromY; j < toY; j++)
-                if (_objectsOnMap[i, j]?.CellType > 1 && _objectsOnMap[i, j].CellType < 5)
+                if (_objectsOnMap[i, j] != null && _objectsOnMap[i, j].CellType < 5)
                 {
                     EatableObjects.Add(_objectsOnMap[i, j]);
                 }

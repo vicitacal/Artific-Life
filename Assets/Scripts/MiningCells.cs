@@ -3,26 +3,21 @@ public class MiningCells : Creature
 {
     protected int EnergyStored = 0;
     protected int EnergyAccumulated = 0;
-    private bool _kill = false;
 
-    private void Update()
-    {
-        if (_kill) Kill();
-    }
     protected override void Awake()
     {
         base.Awake();
     }
-    public int collectEnergy()
+
+    public override int Eat()
     {
-        int boofer = EnergyStored;
-        EnergyStored = 0;
-        return boofer;
+        _needToKill = true;
+        return EnergyStored + OwnCharge + EnergyAccumulated;
     }
 
-    public int Eat()
+    public override void Kill()
     {
-        _kill = true;
-        return EnergyStored + OwnCharge + EnergyAccumulated;
+        Parent.ChildsCount--;
+        base.Kill();
     }
 }

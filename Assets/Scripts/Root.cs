@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Root : MiningCells
 {
-    [HideInInspector] public const int cellType = 4;
     protected override void Awake()
     {
         base.Awake();
+        CellType = 4;
         EnergySpend = 10;
         MapCreator.Tick.AddListener(rootTick);
     }
@@ -23,13 +23,18 @@ public class Root : MiningCells
         {
             EnergyStored += resivedCharge;
         }
+        if (Parent != null)
+        {
+            Parent.ReceiveEnergy(EnergyStored);
+            EnergyStored = 0;
+        }
         OwnCharge -= EnergySpend;
         if (OwnCharge <= 0) Kill();
     }
     public override void Kill()
     {
-        CurrentMap.OrganicField.AddToArea(CurrentPosition, (EnergyAccumulated + EnergyStored) / 9, 1);
-        CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume / 9, 1);
+        CurrentMap.OrganicField.AddToArea(CurrentPosition, ((EnergyAccumulated + EnergyStored) / 9) + OrganicVolume, 1);
+        CurrentMap.ChargeField.AddToArea(CurrentPosition, ChargeVolume, 1);
         MapCreator.Tick.RemoveListener(rootTick);
         base.Kill();
     }

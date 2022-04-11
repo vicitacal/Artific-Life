@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Wood : Creature
 {
-    [HideInInspector] public const int cellType = 5;
     protected override void Awake()
     {
         base.Awake();
+        CellType = 5;
         EnergySpend = 10;
         MapCreator.Tick.AddListener(woodTick);
     }
@@ -17,7 +17,7 @@ public class Wood : Creature
 
     public override void Kill()
     {
-        CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume / 9, 1);
+        CurrentMap.OrganicField.AddToArea(CurrentPosition, OrganicVolume, 1);
         base.Kill();
     }
 }
