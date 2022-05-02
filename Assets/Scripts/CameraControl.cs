@@ -12,9 +12,9 @@ public class CameraControl : MonoBehaviour
     private float MaxX = MapCreator.MapSixeX;
     private float MaxZ = MapCreator.MapSixeY;
     private float MaxY = 30;
-    private float _speed = 0;
-    private const float _defaultSpeed = 5;
-    private const float _maxSpeed = 110;
+    private const float _defaultSpeed = 20;
+    private const float _maxSpeed = 50;
+    private const float _acceleration = 2;
     private bool _camMode = false;
     private const float _zoomMax = 8;
     private const float _zoomMin = 1;
@@ -92,46 +92,46 @@ public class CameraControl : MonoBehaviour
         bool isPrest = false;
         if (Input.GetKey(KeyCode.W))
         {
-            applyPosition(transform.position + transform.forward * Time.deltaTime * _speed);
             isPrest = true;
             _isMoving = true;
-            _direction = transform.forward;
+            _direction += transform.forward * _acceleration * Time.deltaTime * ((Input.GetKey(KeyCode.LeftShift) ? _maxSpeed : _defaultSpeed) - _direction.magnitude);
+            _direction += (transform.forward - _direction.normalized) * Time.deltaTime * 20;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            applyPosition(transform.position + transform.forward * Time.deltaTime * -_speed);
             isPrest = true;
             _isMoving = true;
-            _direction = -transform.forward;
+            _direction -= transform.forward * _acceleration * Time.deltaTime * ((Input.GetKey(KeyCode.LeftShift) ? _maxSpeed : _defaultSpeed) - _direction.magnitude);
+            _direction += (-transform.forward - _direction.normalized) * Time.deltaTime * 20;
         }
         if (Input.GetKey(KeyCode.A)) 
         {
-            applyPosition(transform.position + transform.right * Time.deltaTime * -_speed);
             isPrest = true;
             _isMoving = true;
-            _direction = -transform.right;
+            _direction -= transform.right * _acceleration * Time.deltaTime * ((Input.GetKey(KeyCode.LeftShift) ? _maxSpeed : _defaultSpeed) - _direction.magnitude);
+            _direction += (-transform.right - _direction.normalized) * Time.deltaTime * 20;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            applyPosition(transform.position + transform.right * Time.deltaTime * _speed);
             isPrest = true;
             _isMoving = true;
-            _direction = transform.right;
+            _direction += transform.right * _acceleration * Time.deltaTime * ((Input.GetKey(KeyCode.LeftShift) ? _maxSpeed : _defaultSpeed) - _direction.magnitude);
+            _direction += (transform.right - _direction.normalized) * Time.deltaTime * 20;
         }
         if (isPrest)
         {
-            _speed += ((Input.GetKey(KeyCode.LeftShift) ? _maxSpeed * 1.65f : _maxSpeed) - _speed) * Time.deltaTime * 0.1f;
+            applyPosition(transform.position + _direction * Time.deltaTime);
         }
         else
         {
             if (_isMoving)
             {
-                applyPosition(transform.position + _direction * Time.deltaTime * _speed);
-                _speed -= _speed * Time.deltaTime * 0.1f;
-                if (_speed < 0.01) _isMoving = false;
+                _direction -= _direction * Time.deltaTime * _acceleration;
+                applyPosition(transform.position + _direction * Time.deltaTime);
+                if (_direction.magnitude < 0.1) _isMoving = false;
             }
         }
-        UIController.Instance.spd.text = _speed.ToString();
+        UIController.Instance.spd.text = _direction.magnitude.ToString();
     }
     
     private void normalRotate()
