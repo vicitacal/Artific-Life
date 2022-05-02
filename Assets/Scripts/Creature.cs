@@ -8,11 +8,12 @@ public class Creature : MonoBehaviour
     protected static Map CurrentMap;
     protected int OwnCharge;
     protected int EnergySpend;
-    protected static readonly int OrganicVolume = 10;
-    protected static readonly int ChargeVolume = 15;
+    public static int OrganicVolume = 10;
+    public static int ChargeVolume = 15;
+    public static int OrganicDamageTreshold = 300;
+    public static int EnergyDamageTreshold = 200;
     protected bool _needToKill = false;
     private bool _energyWasSet = false;
-
     public Vector2Int Position => CurrentPosition;
 
     protected virtual void Awake()

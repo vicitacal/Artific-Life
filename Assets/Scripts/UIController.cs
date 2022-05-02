@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.IO;
+
 
 public class UIController : MonoBehaviour
 {
@@ -17,14 +20,17 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject _UiGenomTextFeeld;
     [SerializeField] private Sprite _playButtonTexture;
     [SerializeField] private Sprite _pauseButtonTexture;
+    public Text spd;
+    private string _savePath;
     private bool _isRolled = true;
-    private Sprout _targetSprout;
     private bool _isSproutSelected;
+    private Sprout _targetSprout;
     public static UIController Instance;
 
     private void Awake()
     {
         Instance = this;
+        _savePath = Path.Combine(Application.dataPath, "GenomeSave");
         _spawnCountText.text = "1";
     }
 
@@ -47,7 +53,7 @@ public class UIController : MonoBehaviour
         } 
         if (Input.GetKeyUp(KeyCode.Escape))
         {
-            Pause();
+            Pause(true);
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             CameraControl.Instance.enabled = false;
@@ -56,9 +62,10 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void Pause()
+    public void Pause(bool pause)
     {
-        if (MapCreator.Instance.PauseGame())
+        MapCreator.Instance.PauseGame(pause);
+        if (pause)
             _pauseButtonImage.overrideSprite = _playButtonTexture;
         else
             _pauseButtonImage.overrideSprite = _pauseButtonTexture;
@@ -119,6 +126,11 @@ public class UIController : MonoBehaviour
         _isSproutSelected = target;
         _targetSprout = target;
         _UiGenomTextFeeld.SetActive(_isSproutSelected);
+    }
+
+    public void SaveGenome()
+    {
+        if (_isSproutSelected && _targetSprout) File.WriteAllText(_savePath, _targetSprout.Genome.GetGenomeJson());
     }
 
 }

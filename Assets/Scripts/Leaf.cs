@@ -2,16 +2,18 @@ using UnityEngine;
 
 public class Leaf : MiningCells
 {
-    
+    public static int LeafEnergySpend = 13;
+
     protected override void Awake()
     {
         base.Awake();
         CellType = 3;
-        EnergySpend = 13;
         MapCreator.Tick.AddListener(leafTick);
     }
     private void leafTick()
     {
+        if (CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] > OrganicDamageTreshold || CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] > EnergyDamageTreshold)
+            OwnCharge /= 2;
         int resivedCharge = CurrentMap.IlluminationField.pickValue(CurrentPosition);
         EnergyStored += resivedCharge;
         if (resivedCharge > 2)
@@ -23,7 +25,7 @@ public class Leaf : MiningCells
             Parent.ReceiveEnergy(EnergyStored);
             EnergyStored = 0;
         }
-        OwnCharge -= EnergySpend;
+        OwnCharge -= LeafEnergySpend;
         if (OwnCharge <= 0) Kill();
     }
     public override void Kill()

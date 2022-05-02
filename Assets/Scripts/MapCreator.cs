@@ -44,14 +44,15 @@ public class MapCreator : MonoBehaviour
         _tickPeriod = newTick;
     }
 
-    public bool PauseGame()
+    public void PauseGame(bool pause)
     {
-        if (_isPaused)
-            _tickCorotine = StartCoroutine(EventTick());
-        else
-            StopCoroutine(_tickCorotine);
-        _isPaused = !_isPaused;
-        return _isPaused;
+        if (pause != _isPaused) { 
+            if (pause)
+                StopCoroutine(_tickCorotine);
+            else
+                _tickCorotine = StartCoroutine(EventTick());
+            _isPaused = pause;
+        }
     }
 
     private IEnumerator EventTick() //По хорошему, перенести куда то в более подходящий класс

@@ -2,9 +2,13 @@ using UnityEngine;
 
 public static class GeneralPurpose
 {
-    public static int CutToMapSize(int val)
+    public static int CutToMapSizeX(int val)
     {
         return (MapCreator.MapSixeX + val % MapCreator.MapSixeX) % MapCreator.MapSixeX;
+    }
+    public static int CutToMapSizeY(int val)
+    {
+        return (MapCreator.MapSixeY + val % MapCreator.MapSixeY) % MapCreator.MapSixeY;
     }
 }
 
@@ -23,10 +27,10 @@ public struct DirectionsDescript
     {
         switch (direction)
         {
-            case Directions.left: return new Vector2Int(GeneralPurpose.CutToMapSize(curPos.x - 1), curPos.y);
-            case Directions.up: return new Vector2Int(curPos.x, GeneralPurpose.CutToMapSize(curPos.y + 1));
-            case Directions.right: return new Vector2Int(GeneralPurpose.CutToMapSize(curPos.x + 1), curPos.y);
-            case Directions.down: return new Vector2Int(curPos.x, GeneralPurpose.CutToMapSize(curPos.y - 1));
+            case Directions.left: return new Vector2Int(GeneralPurpose.CutToMapSizeX(curPos.x - 1), curPos.y);
+            case Directions.up: return new Vector2Int(curPos.x, GeneralPurpose.CutToMapSizeY(curPos.y + 1));
+            case Directions.right: return new Vector2Int(GeneralPurpose.CutToMapSizeX(curPos.x + 1), curPos.y);
+            case Directions.down: return new Vector2Int(curPos.x, GeneralPurpose.CutToMapSizeY(curPos.y - 1));
         }
         return curPos;
     }
@@ -35,4 +39,11 @@ public struct DirectionsDescript
 public enum ViewModes
 {
     NormalMode, IlluminationMode, OrganicMode, ChargeMode
+}
+
+[System.Serializable]
+public struct GenomeValues
+{
+    public Genome.Comand[] Genom;
+    public int PerformingOperationNum;
 }

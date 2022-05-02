@@ -14,8 +14,8 @@ public abstract class EnergyArray
 
     public void AddToArea(Vector2Int posToAdd, int value, int radius)
     {
-        for (int x = GeneralPurpose.CutToMapSize(posToAdd.x - radius); x <= GeneralPurpose.CutToMapSize(posToAdd.x + radius); x++)
-            for (int y = GeneralPurpose.CutToMapSize(posToAdd.y - radius); y <= GeneralPurpose.CutToMapSize(posToAdd.y + radius); y++)
+        for (int x = GeneralPurpose.CutToMapSizeX(posToAdd.x - radius); x <= GeneralPurpose.CutToMapSizeX(posToAdd.x + radius); x++)
+            for (int y = GeneralPurpose.CutToMapSizeY(posToAdd.y - radius); y <= GeneralPurpose.CutToMapSizeY(posToAdd.y + radius); y++)
                 MainData[x, y] += value;
     }
 

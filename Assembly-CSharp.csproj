@@ -57,7 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Genome.cs" />
+    <Compile Include="Assets\Scripts\Charge.cs" />
     <Compile Include="Assets\Scripts\UIController.cs" />
+    <Compile Include="Assets\Scripts\EnergyArray.cs" />
+    <Compile Include="Assets\Scripts\Organic.cs" />
     <Compile Include="Assets\Scripts\Leaf.cs" />
     <Compile Include="Assets\Scripts\MapCreator.cs" />
     <Compile Include="Assets\Scripts\Map.cs" />
@@ -66,13 +69,10 @@
     <Compile Include="Assets\Scripts\Root.cs" />
     <Compile Include="Assets\Scripts\Wood.cs" />
     <Compile Include="Assets\Scripts\Sprout.cs" />
+    <Compile Include="Assets\Scripts\Illumination.cs" />
     <Compile Include="Assets\Scripts\GeneralPurpose.cs" />
     <Compile Include="Assets\Scripts\MiningCells.cs" />
     <Compile Include="Assets\Scripts\Antenna.cs" />
-    <Compile Include="Assets\Scripts\Organic.cs" />
-    <Compile Include="Assets\Scripts\EnergyArray.cs" />
-    <Compile Include="Assets\Scripts\Charge.cs" />
-    <Compile Include="Assets\Scripts\Illumination.cs" />
     <Compile Include="Assets\Scripts\EscController.cs" />
   </ItemGroup>
   <ItemGroup>

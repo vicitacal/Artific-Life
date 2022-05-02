@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class Antenna : MiningCells
 {
+    public static int AntennaEnergySpend = 12;
     protected override void Awake()
     {
         base.Awake();
         CellType = 2;
-        EnergySpend = 12;
         MapCreator.Tick.AddListener(antennaTick);
     }
     private void antennaTick()
     {
+        if (CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] > OrganicDamageTreshold)
+            OwnCharge /= 2;
         int resivedCharge = CurrentMap.ChargeField.TakeCharge(CurrentPosition);
         if (resivedCharge > 15)
         {
@@ -28,7 +30,7 @@ public class Antenna : MiningCells
             Parent.ReceiveEnergy(EnergyStored);
             EnergyStored = 0;
         }
-        OwnCharge -= EnergySpend;
+        OwnCharge -= AntennaEnergySpend;
         if (OwnCharge <= 0) Kill();
     }
     public override void Kill()

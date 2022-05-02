@@ -11,7 +11,10 @@ public class CameraControl : MonoBehaviour
     private Vector3 _offset;
     private float MaxX = MapCreator.MapSixeX;
     private float MaxZ = MapCreator.MapSixeY;
-    private readonly float MaxY = 30;
+    private float MaxY = 30;
+    private float _speed = 0;
+    private const float _defaultSpeed = 5;
+    private const float _maxSpeed = 110;
     private bool _camMode = false;
     private const float _zoomMax = 8;
     private const float _zoomMin = 1;
@@ -20,6 +23,8 @@ public class CameraControl : MonoBehaviour
     private float _zoom = 0.25f;
     private float _orbitY = 0;
     private float _orbitX = 0;
+    private bool _isMoving = false;
+    private Vector3 _direction = new Vector3();
     public static CameraControl Instance;
 
     private void Awake()
@@ -79,27 +84,54 @@ public class CameraControl : MonoBehaviour
 
     private void applyPosition(Vector3 newPosition)
     {
-        transform.position = new Vector3(Mathf.Clamp(newPosition.x, 0, MaxX), Mathf.Clamp(newPosition.y, 0.36f, MaxY), Mathf.Clamp(newPosition.z, 0, MaxZ));
+        transform.position = new Vector3(Mathf.Clamp(newPosition.x, -0.5f, MaxX), Mathf.Clamp(newPosition.y, 0.37f, MaxY), Mathf.Clamp(newPosition.z, -0.5f, MaxZ));
     }
     
     private void normalMove()
     {
+        bool isPrest = false;
         if (Input.GetKey(KeyCode.W))
         {
-            applyPosition(transform.position + transform.forward * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? 15f : 5f));
+            applyPosition(transform.position + transform.forward * Time.deltaTime * _speed);
+            isPrest = true;
+            _isMoving = true;
+            _direction = transform.forward;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            applyPosition(transform.position + transform.forward * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? -15f : -5f));
+            applyPosition(transform.position + transform.forward * Time.deltaTime * -_speed);
+            isPrest = true;
+            _isMoving = true;
+            _direction = -transform.forward;
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A)) 
         {
-            applyPosition(transform.position + transform.right * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? -15f : -5f));
+            applyPosition(transform.position + transform.right * Time.deltaTime * -_speed);
+            isPrest = true;
+            _isMoving = true;
+            _direction = -transform.right;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            applyPosition(transform.position + transform.right * Time.deltaTime * (Input.GetKey(KeyCode.LeftShift) ? 15f : 5f));
+            applyPosition(transform.position + transform.right * Time.deltaTime * _speed);
+            isPrest = true;
+            _isMoving = true;
+            _direction = transform.right;
         }
+        if (isPrest)
+        {
+            _speed += ((Input.GetKey(KeyCode.LeftShift) ? _maxSpeed * 1.65f : _maxSpeed) - _speed) * Time.deltaTime * 0.1f;
+        }
+        else
+        {
+            if (_isMoving)
+            {
+                applyPosition(transform.position + _direction * Time.deltaTime * _speed);
+                _speed -= _speed * Time.deltaTime * 0.1f;
+                if (_speed < 0.01) _isMoving = false;
+            }
+        }
+        UIController.Instance.spd.text = _speed.ToString();
     }
     
     private void normalRotate()
@@ -158,7 +190,9 @@ public class CameraControl : MonoBehaviour
 
     public void UpdateMapSize()
     {
-        MaxX = MapCreator.MapSixeX;
-        MaxZ = MapCreator.MapSixeY;
+        MaxX = MapCreator.MapSixeX - 0.5f;
+        MaxZ = MapCreator.MapSixeY - 0.5f;
+        MaxY = Mathf.Sqrt(MapCreator.MapSixeY * MapCreator.MapSixeX) * 0.5f;
+        applyPosition(transform.position);
     }
 }

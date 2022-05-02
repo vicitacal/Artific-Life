@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class Root : MiningCells
 {
+    public static int RootEnergySpend = 10;
+
     protected override void Awake()
     {
         base.Awake();
         CellType = 4;
-        EnergySpend = 10;
         MapCreator.Tick.AddListener(rootTick);
     }
     private void rootTick()
     {
+        if (CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] > EnergyDamageTreshold)
+            OwnCharge /= 2;
         int resivedCharge = CurrentMap.OrganicField.TakeOrganic(CurrentPosition);
         if (resivedCharge > 15)
         {
@@ -28,7 +31,7 @@ public class Root : MiningCells
             Parent.ReceiveEnergy(EnergyStored);
             EnergyStored = 0;
         }
-        OwnCharge -= EnergySpend;
+        OwnCharge -= RootEnergySpend;
         if (OwnCharge <= 0) Kill();
     }
     public override void Kill()

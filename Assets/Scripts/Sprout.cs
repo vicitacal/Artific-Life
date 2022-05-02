@@ -4,19 +4,20 @@ using UnityEngine;
 public class Sprout : Creature
 {
     [SerializeField] private GameObject _tail;
+    [HideInInspector] public int ChildsCount = 0;
     private MeshRenderer _head;
     private Genome _genome;
     private DirectionsDescript _currentDirection;
-    private const int _sleepChargeSpend = 2;
-    private const int _defaultChargeSpend = 20;
-    [HideInInspector] public int ChildsCount = 0;
-    private int _chargeSpendPerStep = 20;
+    private int _chargeSpendPerStep;
     private int _chargeRize = 0;
     private int _previousEnergy = 0;
     private bool _isMultiCell = false;
     private bool _firstChld = false;
     private bool _prevOperationSuccess = false;
     private bool _sleeping = false;
+    public static int SleepChargeSpend = 2;
+    public static int DefaultChargeSpend = 20;
+    public static float MutateChanse = 0.8f;
     public int Charge => OwnCharge;
     public int ChargeChenge => _chargeRize;
     public Genome Genome => _genome;
@@ -28,21 +29,24 @@ public class Sprout : Creature
         _genome = new Genome(this, new List<Genome.Gene> {EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour, Sleep});
         MapCreator.Tick.AddListener(Tick);
         OwnCharge = 1500;
+        _chargeSpendPerStep = DefaultChargeSpend;
     }
 
     private void Tick()
-    { 
+    {
+        if (CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] > OrganicDamageTreshold || CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] > EnergyDamageTreshold)
+            OwnCharge /= 2;
         if (ChildsCount == 0)
         {
             ActivateTail(false);
             _sleeping = false;
-            _chargeSpendPerStep = _defaultChargeSpend;
+            _chargeSpendPerStep = DefaultChargeSpend;
             _head.material.color = Color.white;
         }
         if (!_sleeping)
         {
             _prevOperationSuccess = _genome.PerformGene();
-            _genome.MutateGenome(0.8f);
+            _genome.MutateGenome(MutateChanse);
         }
         OwnCharge -= _chargeSpendPerStep;
         _chargeRize = OwnCharge - _previousEnergy;
@@ -94,7 +98,7 @@ public class Sprout : Creature
         if (_isMultiCell)
         {
             _sleeping = true;
-            _chargeSpendPerStep = _sleepChargeSpend;
+            _chargeSpendPerStep = SleepChargeSpend;
             _head.material.color = new Color(0.52f, 0.12f, 0);
             return true;
         }

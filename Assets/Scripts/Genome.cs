@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[System.Serializable]
 public class Genome
 {
     public Genome(Sprout parent, List<Gene> genePool)
@@ -35,39 +37,39 @@ public class Genome
                     switch (curDir)
                     {
                         case DirectionsDescript.Directions.left:
-                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y - 1));
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSizeY(CurPos.y - 1));
                         case DirectionsDescript.Directions.up:
-                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x - 1), CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSizeX(CurPos.x - 1), CurPos.y);
                         case DirectionsDescript.Directions.right:
-                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y + 1));
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSizeY(CurPos.y + 1));
                         case DirectionsDescript.Directions.down:
-                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x + 1), CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSizeX(CurPos.x + 1), CurPos.y);
                     }
                     break;
                 case AvaliableOrdinal.secondPos:
                     switch (curDir)
                     {
                         case DirectionsDescript.Directions.left:
-                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x + 1), CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSizeX(CurPos.x + 1), CurPos.y);
                         case DirectionsDescript.Directions.up:
-                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y - 1));
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSizeY(CurPos.y - 1));
                         case DirectionsDescript.Directions.right:
-                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x - 1), CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSizeX(CurPos.x - 1), CurPos.y);
                         case DirectionsDescript.Directions.down:
-                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y + 1));
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSizeY(CurPos.y + 1));
                     }
                     break;
                 case AvaliableOrdinal.thirdPos:
                     switch (curDir)
                     {
                         case DirectionsDescript.Directions.left:
-                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y + 1));
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSizeY(CurPos.y + 1));
                         case DirectionsDescript.Directions.up:
-                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x + 1), CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSizeX(CurPos.x + 1), CurPos.y);
                         case DirectionsDescript.Directions.right:
-                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSize(CurPos.y - 1));
+                            return new Vector2Int(CurPos.x, GeneralPurpose.CutToMapSizeY(CurPos.y - 1));
                         case DirectionsDescript.Directions.down:
-                            return new Vector2Int(GeneralPurpose.CutToMapSize(CurPos.x - 1), CurPos.y);
+                            return new Vector2Int(GeneralPurpose.CutToMapSizeX(CurPos.x - 1), CurPos.y);
                     }
                     break;
             }
@@ -144,6 +146,11 @@ public class Genome
         public ChildDiscript SecondChild;
         public ChildDiscript ThirdChild;
         public byte Transition;
+        public static int MinChildCost = 50;
+        public static int MaxChildCost = 200;
+        public static int MinSproutCost = 200;
+        public static int MaxSproutCost = 450;
+        public static int MaxConditionArgument = 500;
 
         public int getHighstChildCost()
         {
@@ -159,19 +166,19 @@ public class Genome
             newRandomComand.ComandId = (byte)Random.Range(0, 6);
             newRandomComand.MoveDirection = new DirectionsDescript((byte)Random.Range(0, 4));
             newRandomComand.Condition = (byte)Random.Range(0, 16);
-            newRandomComand.ConditionArgument = (byte)Random.Range(0, 500);
+            newRandomComand.ConditionArgument = (byte)Random.Range(0, MaxConditionArgument);
             newRandomComand.FirstChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.firstPos);
             newRandomComand.SecondChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.secondPos);
             newRandomComand.ThirdChild = new ChildDiscript((byte)Random.Range(0, 5), 0, ChildPlase.AvaliableOrdinal.thirdPos);
             newRandomComand.Transition = (byte)Random.Range(0, GenomeLenght);
-            newRandomComand.FirstChild.ChildCost = newRandomComand.FirstChild.ChildType == 1 ? Random.Range(200, 450) : Random.Range(50, 200);
-            newRandomComand.SecondChild.ChildCost = newRandomComand.SecondChild.ChildType == 1 ? Random.Range(200, 450) : Random.Range(50, 200);
-            newRandomComand.ThirdChild.ChildCost = newRandomComand.ThirdChild.ChildType == 1 ? Random.Range(200, 450) : Random.Range(50, 200);
+            newRandomComand.FirstChild.ChildCost = newRandomComand.FirstChild.ChildType == 1 ? Random.Range(MinSproutCost, MaxSproutCost) : Random.Range(MinChildCost, MaxChildCost);
+            newRandomComand.SecondChild.ChildCost = newRandomComand.SecondChild.ChildType == 1 ? Random.Range(MinSproutCost, MaxSproutCost) : Random.Range(MinChildCost, MaxChildCost);
+            newRandomComand.ThirdChild.ChildCost = newRandomComand.ThirdChild.ChildType == 1 ? Random.Range(MinSproutCost, MaxSproutCost) : Random.Range(MinChildCost, MaxChildCost);
             return newRandomComand;
         }
     }
 
-    public const int GenomeLenght = 24;
+    public static int GenomeLenght = 24;
     public delegate bool Gene(Comand value);
     public int PerformingOperationNum = 0;
     private Sprout _parent;
@@ -275,5 +282,13 @@ public class Genome
     public void SetGenom(Comand[] inputGenome)
     {
         inputGenome.CopyTo(_genom, 0);
+    }
+
+    public string GetGenomeJson()
+    {
+        GenomeValues values = new GenomeValues();
+        values.Genom = _genom;
+        values.PerformingOperationNum = PerformingOperationNum;
+        return JsonUtility.ToJson(values);
     }
 }
