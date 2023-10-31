@@ -7,6 +7,7 @@ public class Creature : MonoBehaviour
     protected Vector2Int CurrentPosition;
     protected static Map CurrentMap;
     protected int OwnCharge;
+    protected int PreviousEnergy = 0;
     protected int EnergySpend;
     public static int OrganicVolume = 10;
     public static int ChargeVolume = 15;
@@ -46,11 +47,12 @@ public class Creature : MonoBehaviour
         return OwnCharge;
     }
 
-    public void setStartEnergy(int startEnergy)
+    public void setStartEnergy(int newStartEnergy)
     {
         if (!_energyWasSet)
         {
-            OwnCharge = startEnergy;
+            OwnCharge = newStartEnergy;
+            PreviousEnergy = newStartEnergy;
             _energyWasSet = true;
         }
     }

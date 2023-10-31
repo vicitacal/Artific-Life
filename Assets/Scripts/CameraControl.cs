@@ -24,6 +24,7 @@ public class CameraControl : MonoBehaviour
     private float _orbitY = 0;
     private float _orbitX = 0;
     private bool _isMoving = false;
+    private bool _isControl = false;
     private Vector3 _direction = new Vector3();
     public static CameraControl Instance;
 
@@ -42,10 +43,13 @@ public class CameraControl : MonoBehaviour
     
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl)) Cursor.visible = true;
-        if (Input.GetKeyUp(KeyCode.LeftControl)) Cursor.visible = false;
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            Cursor.visible = !Cursor.visible;
+            _isControl = !_isControl;
+        }
         if (Input.GetMouseButtonDown(1)) setCamMode(false);
-        if (Input.GetKey(KeyCode.LeftControl))
+        if (_isControl)
         {
             Cursor.lockState = CursorLockMode.None;
             if (Input.GetMouseButtonDown(0))
@@ -131,7 +135,6 @@ public class CameraControl : MonoBehaviour
                 if (_direction.magnitude < 0.1) _isMoving = false;
             }
         }
-        UIController.Instance.spd.text = _direction.magnitude.ToString();
     }
     
     private void normalRotate()
@@ -179,6 +182,7 @@ public class CameraControl : MonoBehaviour
         {
             _orbitX = -transform.localEulerAngles.x;
             controllerUI.ShowSproutDescript(_targetSprout);
+            controllerUI.UpdateLoadFiles();
         }
         else
         {

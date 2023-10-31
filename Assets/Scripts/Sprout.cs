@@ -10,13 +10,13 @@ public class Sprout : Creature
     private DirectionsDescript _currentDirection;
     private int _chargeSpendPerStep;
     private int _chargeRize = 0;
-    private int _previousEnergy = 0;
     private bool _isMultiCell = false;
     private bool _firstChld = false;
     private bool _prevOperationSuccess = false;
     private bool _sleeping = false;
     public static int SleepChargeSpend = 2;
     public static int DefaultChargeSpend = 20;
+    public static int StartEnergy = 1500;
     public static float MutateChanse = 0.8f;
     public int Charge => OwnCharge;
     public int ChargeChenge => _chargeRize;
@@ -28,7 +28,8 @@ public class Sprout : Creature
         _head = GetComponentInChildren<MeshRenderer>();
         _genome = new Genome(this, new List<Genome.Gene> {EatOrganic, Move, CreateChilds, ShiftOrganic, EatNeighbour, Sleep});
         MapCreator.Tick.AddListener(Tick);
-        OwnCharge = 1500;
+        OwnCharge = StartEnergy;
+        PreviousEnergy = StartEnergy;
         _chargeSpendPerStep = DefaultChargeSpend;
     }
 
@@ -49,8 +50,8 @@ public class Sprout : Creature
             _genome.MutateGenome(MutateChanse);
         }
         OwnCharge -= _chargeSpendPerStep;
-        _chargeRize = OwnCharge - _previousEnergy;
-        _previousEnergy = OwnCharge;
+        _chargeRize = OwnCharge - PreviousEnergy;
+        PreviousEnergy = OwnCharge;
         if (OwnCharge <= 0) Kill();
     }
     
@@ -108,13 +109,9 @@ public class Sprout : Creature
     private bool EatOrganic(Genome.Comand inputComand)
     {
         int resivedCharge = CurrentMap.OrganicField.TakeOrganic(CurrentPosition);
-        if (resivedCharge > 0)
-        {
-            OwnCharge += resivedCharge;
-            return true;
-        }
-        else 
-            return false;
+        OwnCharge += resivedCharge;
+        if (resivedCharge > 0) return true;
+        return false;
     }
 
     private bool ShiftOrganic(Genome.Comand inputComand)
@@ -160,9 +157,15 @@ public class Sprout : Creature
             spawnedCreature.setStartEnergy(childDiscript.ChildCost);
             spawnedCreature.Parent = this;
             if (childDiscript.ChildType == 1)
-                spawnetObject.GetComponentInChildren<Sprout>().SetGenom(_genome.Genes, _genome.PerformingOperationNum);
+            {
+                Sprout spawnedSprout = spawnetObject.GetComponentInChildren<Sprout>();
+                spawnedSprout.SetGenom(_genome.Genes, _genome.PerformingOperationNum);
+                spawnedSprout._currentDirection.direction = childDiscript.Position.getChildDirection(_currentDirection.direction);
+            }
             else
+            {
                 ChildsCount++;
+            }
             _firstChld = true;
             isCreated = true;
         }
@@ -201,21 +204,21 @@ public class Sprout : Creature
             case 3:
                 return _isMultiCell;
             case 4:
-                return _chargeRize > parametr / 10;
+                return _chargeRize > parametr;
             case 5:
-                return _chargeRize <= parametr / 10;
+                return _chargeRize <= parametr;
             case 6:
-                return CurrentMap.IlluminationField.Values[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
+                return CurrentMap.IlluminationField.Values[CurrentPosition.x, CurrentPosition.y] > parametr;
             case 7:
-                return CurrentMap.IlluminationField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
+                return CurrentMap.IlluminationField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr;
             case 8:
-                return CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
+                return CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] > parametr;
             case 9:
-                return CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
+                return CurrentMap.ChargeField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr;
             case 10:
-                return CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] > parametr / 50;
+                return CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] > parametr;
             case 11:
-                return CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr / 50;
+                return CurrentMap.OrganicField.Values[CurrentPosition.x, CurrentPosition.y] <= parametr;
             case 12:
                 return _prevOperationSuccess;
             case 13:

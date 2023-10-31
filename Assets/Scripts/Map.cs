@@ -112,12 +112,11 @@ public class Map : MonoBehaviour
             for (int j = position.y - radius; j < position.y + radius; j++)
             {
                 int x = GeneralPurpose.CutToMapSizeX(i);
-                int y = GeneralPurpose.CutToMapSizeY(j); 
+                int y = GeneralPurpose.CutToMapSizeY(j);
                 if (_objectsOnMap[x, y] != null && _objectsOnMap[x, y].CellType < 5 && i != position.x && j != position.y)
                 {
                     EatableObjects.Add(_objectsOnMap[x, y]);
                 }
-
             }
         return EatableObjects;
     }

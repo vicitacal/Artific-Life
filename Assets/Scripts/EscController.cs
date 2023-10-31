@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 public class EscController : MonoBehaviour
 {
@@ -25,6 +24,7 @@ public class EscController : MonoBehaviour
     [SerializeField] private InputField _organicTreshold;
     [SerializeField] private InputField _energyTreshold;
     [SerializeField] private InputField _mutationChance;
+    [SerializeField] private InputField _startEnergy;
     [SerializeField] private GameObject _buttonPanel;
     [SerializeField] private GameObject _settingsPanel;
     public static EscController Instance;
@@ -59,6 +59,9 @@ public class EscController : MonoBehaviour
         Creature.OrganicDamageTreshold = PlayerPrefs.GetInt("organicTreshold", 300);
         Creature.EnergyDamageTreshold = PlayerPrefs.GetInt("energyTreshold", 200);
         Sprout.MutateChanse = PlayerPrefs.GetFloat("mutationChance", 0.8f);
+        Sprout.StartEnergy = PlayerPrefs.GetInt("StartEnergy", 1500);
+        GeneralPurpose.MapSizeX = MapCreator.MapSixeX;
+        GeneralPurpose.MapSizeY = MapCreator.MapSixeY;
         ReinitAll();
         gameObject.SetActive(false);
     }
@@ -71,8 +74,11 @@ public class EscController : MonoBehaviour
     public void ReinitAll()
     {
         UIController.Instance.ClearScene();
+        UIController.Instance.CalculateSlider();
         MapCreator.Instance.InitMap();
         CameraControl.Instance.UpdateMapSize();
+        GeneralPurpose.MapSizeX = MapCreator.MapSixeX;
+        GeneralPurpose.MapSizeY = MapCreator.MapSixeY;
         _map.InitArrays();
         _map.InitMap();
         _map.InitTexture();
@@ -106,8 +112,8 @@ public class EscController : MonoBehaviour
         if (equalizationStep.Contains(".")) equalizationStep = equalizationStep.Replace(".", ",");
         string mutationChanse = _mutationChance.text;
         if (mutationChanse.Contains(".")) mutationChanse = mutationChanse.Replace(".", ",");
-        MapCreator.MapSixeX = Mathf.Clamp(System.Convert.ToInt32(_inputX.text == "" ? "0" : _inputX.text), 4, 2000);
-        MapCreator.MapSixeY = Mathf.Clamp(System.Convert.ToInt32(_inputY.text == "" ? "0" : _inputY.text), 4, 1500);
+        MapCreator.MapSixeX = Mathf.Clamp(System.Convert.ToInt32(_inputX.text == "" ? "0" : _inputX.text), 5, 2000);
+        MapCreator.MapSixeY = Mathf.Clamp(System.Convert.ToInt32(_inputY.text == "" ? "0" : _inputY.text), 5, 1500);
         Charge.EqualizationTo = Mathf.Clamp(System.Convert.ToInt32(_chargeStrive.text == "" ? "0" : _chargeStrive.text), 0, 10000);
         Charge.EqualizationStep = Mathf.Clamp(System.Convert.ToSingle(equalizationStep == "" ? "0" : equalizationStep), 0.001f, 100f);
         Sprout.DefaultChargeSpend = Mathf.Clamp(System.Convert.ToInt32(_chargeSpendSprout.text == "" ? "0" : _chargeSpendSprout.text), 1, 1000);
@@ -127,6 +133,7 @@ public class EscController : MonoBehaviour
         Creature.OrganicDamageTreshold = Mathf.Clamp(System.Convert.ToInt32(_organicTreshold.text == "" ? "0" : _organicTreshold.text), 1, 10000);
         Creature.EnergyDamageTreshold = Mathf.Clamp(System.Convert.ToInt32(_energyTreshold.text == "" ? "0" : _energyTreshold.text), 1, 10000);
         Sprout.MutateChanse = Mathf.Clamp(System.Convert.ToSingle(mutationChanse == "" ? "0" : mutationChanse), 0, 1f);
+        Sprout.StartEnergy = Mathf.Clamp(System.Convert.ToInt32(_startEnergy.text == "" ? "0" : _startEnergy.text), Sprout.DefaultChargeSpend * 2, 10000);
         SaveSettings();
         ShowSettings();
         ReinitAll();
@@ -154,6 +161,8 @@ public class EscController : MonoBehaviour
         _organicTreshold.text = Creature.OrganicDamageTreshold.ToString();
         _energyTreshold.text = Creature.EnergyDamageTreshold.ToString();
         _mutationChance.text = Sprout.MutateChanse.ToString("0.0");
+        _startEnergy.text = Sprout.StartEnergy.ToString();
+
     }
 
     public void RestorDefault()
@@ -179,6 +188,7 @@ public class EscController : MonoBehaviour
         _organicTreshold.text = "300";
         _energyTreshold.text = "200";
         _mutationChance.text = "0,8";
+        _startEnergy.text = "1500";
     }
 
     private void SaveSettings()
@@ -204,6 +214,7 @@ public class EscController : MonoBehaviour
         PlayerPrefs.SetInt("organicTreshold", Creature.OrganicDamageTreshold);
         PlayerPrefs.SetInt("energyTreshold", Creature.EnergyDamageTreshold);
         PlayerPrefs.SetFloat("mutationChance", Sprout.MutateChanse);
+        PlayerPrefs.SetInt("StartEnergy", Sprout.StartEnergy);
         PlayerPrefs.Save();
     }
 

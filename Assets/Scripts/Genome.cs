@@ -22,6 +22,8 @@ public class Genome
         _genePool = new List<Gene>(genePool);
         comands.CopyTo(_genom, 0);
     }
+    
+    [System.Serializable]
     public struct ChildPlase
     {
         public enum AvaliableOrdinal
@@ -124,6 +126,8 @@ public class Genome
             return DirectionsDescript.Directions.left;
         }
     }
+
+    [System.Serializable]
     public struct ChildDiscript
     {
         public ChildDiscript(byte type, byte cost, ChildPlase.AvaliableOrdinal pos)
@@ -136,6 +140,8 @@ public class Genome
         public int ChildCost;
         public ChildPlase Position;
     }
+
+    [System.Serializable]
     public struct Comand
     {
         public byte ComandId;
@@ -155,8 +161,8 @@ public class Genome
         public int getHighstChildCost()
         {
             var highstCost = FirstChild.ChildCost;
-            if (SecondChild.ChildCost > highstCost) highstCost = SecondChild.ChildCost;
-            if (ThirdChild.ChildCost > highstCost) highstCost = ThirdChild.ChildCost;
+            if (SecondChild.ChildCost > highstCost && SecondChild.ChildType != 0) highstCost = SecondChild.ChildCost;
+            if (ThirdChild.ChildCost > highstCost && ThirdChild.ChildType != 0) highstCost = ThirdChild.ChildCost;
             return highstCost;
         }
 
@@ -253,12 +259,12 @@ public class Genome
     {
         bool operationSucsess;
         Comand curentComand = _genom[PerformingOperationNum];
-        if (!_parent.CheckCondition(curentComand))
+        for (int i = 1; i < GenomeLenght; i++)
         {
+            if (_parent.CheckCondition(curentComand)) break;
             PerformingOperationNum = curentComand.Transition;
             curentComand = _genom[PerformingOperationNum];
         }
-
         operationSucsess = _genePool[curentComand.ComandId](curentComand);
         PerformingOperationNum = curentComand.Transition;
         return operationSucsess;
@@ -267,11 +273,10 @@ public class Genome
     public string GetDescription()
     {
         string description = "";
-
         for (int i = 0; i < _genom.Length; i++)
         {
             description += i == PerformingOperationNum ? ">" : "  ";
-            description += i + ") id:" + _genom[i].ComandId + " Dir:" + _genom[i].MoveDirection.direction + " Cond:" + _genom[i].Condition + " Arg:" + _genom[i].ConditionArgument;
+            description += (i + 1) + ") id:" + _genom[i].ComandId + " Dir:" + _genom[i].MoveDirection.direction + " Cond:" + _genom[i].Condition + " Arg:" + _genom[i].ConditionArgument;
             description += " C1:" + _genom[i].FirstChild.ChildType + " Cost:" + _genom[i].FirstChild.ChildCost + " C2:" + _genom[i].SecondChild.ChildType;
             description += " Cost:" + _genom[i].SecondChild.ChildCost + " C3:" + _genom[i].ThirdChild.ChildType + " Cost:" + _genom[i].ThirdChild.ChildCost;
             description += " Jump:" + _genom[i].Transition + "\n";
@@ -284,11 +289,25 @@ public class Genome
         inputGenome.CopyTo(_genom, 0);
     }
 
+    public void SetGenom(string Json)
+    {
+        GenomeValues values = JsonUtility.FromJson<GenomeValues>(Json);
+        if (values.Genom.Length < GenomeLenght)
+        {
+            System.Array.Copy(values.Genom, _genom, values.Genom.Length);
+            for (int i = values.Genom.Length; i < GenomeLenght; i++) _genom[i] = Comand.getRandomComand();
+        }
+        else
+        {
+            System.Array.Copy(values.Genom, _genom, GenomeLenght);
+            for (int i = 0; i < _genom.Length; i++) if (_genom[i].Transition > GenomeLenght - 1) _genom[i].Transition = (byte)Random.Range(0, GenomeLenght);
+        }
+        PerformingOperationNum = Mathf.Clamp(values.PerformingOperationNum, 0, GenomeLenght-1);
+    }
+
     public string GetGenomeJson()
     {
-        GenomeValues values = new GenomeValues();
-        values.Genom = _genom;
-        values.PerformingOperationNum = PerformingOperationNum;
-        return JsonUtility.ToJson(values);
+        GenomeValues values = new GenomeValues(_genom, PerformingOperationNum);
+        return values.GetJson();
     }
 }

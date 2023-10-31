@@ -1,0 +1,455 @@
+{
+    "Genom": [
+        {
+            "ComandId": 2,
+            "MoveDirection": {
+                "direction": 0
+            },
+            "Condition": 4,
+            "ConditionArgument": 30,
+            "FirstChild": {
+                "ChildType": 1,
+                "ChildCost": 300,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 0,
+                "ChildCost": 100,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 3,
+                "ChildCost": 45,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 1
+        },
+		{
+            "ComandId": 1,
+            "MoveDirection": {
+                "direction": 0
+            },
+            "Condition": 12,
+            "ConditionArgument": 0,
+            "FirstChild": {
+                "ChildType": 3,
+                "ChildCost": 103,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 0,
+                "ChildCost": 83,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 0,
+                "ChildCost": 153,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 2
+        },
+		{
+            "ComandId": 1,
+            "MoveDirection": {
+                "direction": 3
+            },
+            "Condition": 12,
+            "ConditionArgument": 0,
+            "FirstChild": {
+                "ChildType": 1,
+                "ChildCost": 299,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 4,
+                "ChildCost": 157,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 2,
+                "ChildCost": 176,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 3
+        },
+        {
+            "ComandId": 2,
+            "MoveDirection": {
+                "direction": 0
+            },
+            "Condition": 5,
+            "ConditionArgument": 30,
+            "FirstChild": {
+                "ChildType": 3,
+                "ChildCost": 45,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 0,
+                "ChildCost": 100,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 3,
+                "ChildCost": 45,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 0
+        },
+        {
+            "ComandId": 1,
+            "MoveDirection": {
+                "direction": 0
+            },
+            "Condition": 7,
+            "ConditionArgument": 189,
+            "FirstChild": {
+                "ChildType": 0,
+                "ChildCost": 156,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 1,
+                "ChildCost": 359,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 1,
+                "ChildCost": 209,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 12
+        },
+        {
+            "ComandId": 2,
+            "MoveDirection": {
+                "direction": 0
+            },
+            "Condition": 7,
+            "ConditionArgument": 237,
+            "FirstChild": {
+                "ChildType": 0,
+                "ChildCost": 182,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 3,
+                "ChildCost": 154,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 3,
+                "ChildCost": 136,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 3
+        },
+        {
+            "ComandId": 4,
+            "MoveDirection": {
+                "direction": 3
+            },
+            "Condition": 13,
+            "ConditionArgument": 62,
+            "FirstChild": {
+                "ChildType": 1,
+                "ChildCost": 344,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 0,
+                "ChildCost": 90,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 1,
+                "ChildCost": 341,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 5
+        },
+        {
+            "ComandId": 0,
+            "MoveDirection": {
+                "direction": 3
+            },
+            "Condition": 2,
+            "ConditionArgument": 4,
+            "FirstChild": {
+                "ChildType": 1,
+                "ChildCost": 242,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 3,
+                "ChildCost": 181,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 0,
+                "ChildCost": 97,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 11
+        },
+        {
+            "ComandId": 5,
+            "MoveDirection": {
+                "direction": 2
+            },
+            "Condition": 9,
+            "ConditionArgument": 166,
+            "FirstChild": {
+                "ChildType": 2,
+                "ChildCost": 123,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 3,
+                "ChildCost": 180,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 1,
+                "ChildCost": 269,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 10
+        },
+        {
+            "ComandId": 1,
+            "MoveDirection": {
+                "direction": 1
+            },
+            "Condition": 11,
+            "ConditionArgument": 215,
+            "FirstChild": {
+                "ChildType": 2,
+                "ChildCost": 162,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 3,
+                "ChildCost": 116,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 4,
+                "ChildCost": 182,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 4
+        },
+        {
+            "ComandId": 5,
+            "MoveDirection": {
+                "direction": 3
+            },
+            "Condition": 1,
+            "ConditionArgument": 180,
+            "FirstChild": {
+                "ChildType": 2,
+                "ChildCost": 125,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 3,
+                "ChildCost": 54,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 1,
+                "ChildCost": 406,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 9
+        },
+        {
+            "ComandId": 4,
+            "MoveDirection": {
+                "direction": 3
+            },
+            "Condition": 9,
+            "ConditionArgument": 160,
+            "FirstChild": {
+                "ChildType": 3,
+                "ChildCost": 55,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 1,
+                "ChildCost": 237,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 4,
+                "ChildCost": 176,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 9
+        },
+        {
+            "ComandId": 3,
+            "MoveDirection": {
+                "direction": 2
+            },
+            "Condition": 3,
+            "ConditionArgument": 100,
+            "FirstChild": {
+                "ChildType": 3,
+                "ChildCost": 131,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 4,
+                "ChildCost": 135,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 0,
+                "ChildCost": 70,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 5
+        },
+        {
+            "ComandId": 5,
+            "MoveDirection": {
+                "direction": 0
+            },
+            "Condition": 12,
+            "ConditionArgument": 217,
+            "FirstChild": {
+                "ChildType": 1,
+                "ChildCost": 261,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 1,
+                "ChildCost": 342,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 4,
+                "ChildCost": 121,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 7
+        },
+        {
+            "ComandId": 3,
+            "MoveDirection": {
+                "direction": 0
+            },
+            "Condition": 8,
+            "ConditionArgument": 61,
+            "FirstChild": {
+                "ChildType": 3,
+                "ChildCost": 96,
+                "Position": {
+                    "Ordinal": 0
+                }
+            },
+            "SecondChild": {
+                "ChildType": 1,
+                "ChildCost": 382,
+                "Position": {
+                    "Ordinal": 1
+                }
+            },
+            "ThirdChild": {
+                "ChildType": 0,
+                "ChildCost": 182,
+                "Position": {
+                    "Ordinal": 2
+                }
+            },
+            "Transition": 3
+        }
+    ],
+    "PerformingOperationNum": 0
+}

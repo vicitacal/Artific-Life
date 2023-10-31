@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 using System.IO;
+using System;
+using System.Collections.Generic;
 
 
 public class UIController : MonoBehaviour
@@ -20,17 +21,22 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject _UiGenomTextFeeld;
     [SerializeField] private Sprite _playButtonTexture;
     [SerializeField] private Sprite _pauseButtonTexture;
-    public Text spd;
-    private string _savePath;
+    [SerializeField] private InputField _saveName;
+    [SerializeField] private Dropdown _loadFilesDropdown;
+    private List<String> _fileNames = new List<string>();
+    private const string _myExtension = ".sprt";
+    private string _baseSavePath;
     private bool _isRolled = true;
-    private bool _isSproutSelected;
+    private bool _isSproutSelected = false;
+    private bool _fullDesctipt = false;
     private Sprout _targetSprout;
     public static UIController Instance;
 
     private void Awake()
     {
         Instance = this;
-        _savePath = Path.Combine(Application.dataPath, "GenomeSave");
+        _baseSavePath = Path.Combine(Application.dataPath, "Saves");
+        Directory.CreateDirectory(_baseSavePath);
         _spawnCountText.text = "1";
     }
 
@@ -74,6 +80,11 @@ public class UIController : MonoBehaviour
     {
         _spawnCountText.text = _sliderSpawnCount.value.ToString();
     }
+
+    public void CalculateSlider()
+    {
+        _sliderSpawnCount.maxValue = (MapCreator.MapSixeX * MapCreator.MapSixeY) / 100;
+    }
     
     public void CallSpawner()
     {
@@ -112,11 +123,21 @@ public class UIController : MonoBehaviour
     {
         _map.SetViewMode((ViewModes)_viewModeSwicher.value);
     }
+
+    public void FullDiscript(bool isFool) => _fullDesctipt = isFool;
     private void printSproutDiscript(Text text, Sprout sprout)
     {
         text.text = "";
-        text.text += sprout.Genome.GetDescription();
-        text.text += "-----------\n";
+        if (_fullDesctipt)
+        {
+            text.text += sprout.Genome.GetDescription();
+            text.text += "-----------\n";
+        }
+        else
+        {
+            text.text += "Performing operation: " + sprout.Genome.PerformingOperationNum + "\n";
+            text.text += "Childs count: " + sprout.ChildsCount + "\n";
+        }
         text.text += "Charge: " + sprout.Charge + "\n";
         text.text += "Charge change: " + sprout.ChargeChenge;
     }
@@ -130,7 +151,50 @@ public class UIController : MonoBehaviour
 
     public void SaveGenome()
     {
-        if (_isSproutSelected && _targetSprout) File.WriteAllText(_savePath, _targetSprout.Genome.GetGenomeJson());
+        int num = 1;
+        string finalName = "";
+        if (!_isSproutSelected || !_targetSprout) return;
+        string savePath;
+        savePath = Path.Combine(_baseSavePath, _saveName.text == "" ? "NewSprout" : _saveName.text);
+        savePath = Path.ChangeExtension(savePath, _myExtension);
+        while (File.Exists(savePath))
+        {
+            savePath = Path.Combine(_baseSavePath, _saveName.text == "" ? "NewSprout" : _saveName.text);
+            savePath += num.ToString();
+            savePath = Path.ChangeExtension(savePath, _myExtension);
+            if (++num > 500) break;
+        }
+        finalName = Path.GetFileNameWithoutExtension(savePath);
+        File.WriteAllText(savePath, _targetSprout.Genome.GetGenomeJson());
+        UpdateLoadFiles();
+        _loadFilesDropdown.value = _fileNames.FindIndex(val => val == finalName);
     }
 
+    public void LoadGenome()
+    {
+        string loadPath = Path.Combine(_baseSavePath, _loadFilesDropdown.captionText.text);
+        loadPath = Path.ChangeExtension(loadPath, _myExtension);
+        if (_isSproutSelected && _targetSprout && File.Exists(loadPath)) _targetSprout.Genome.SetGenom(File.ReadAllText(loadPath));
+    }
+
+    public void UpdateLoadFiles()
+    {
+        string prevFileName = _loadFilesDropdown.captionText.text;
+        _fileNames.Clear();
+        foreach (var fileName in Directory.EnumerateFiles(_baseSavePath))
+        {
+            if (Path.GetExtension(fileName) == _myExtension) _fileNames.Add(Path.GetFileNameWithoutExtension(fileName));
+        }
+        _loadFilesDropdown.ClearOptions();
+        _loadFilesDropdown.AddOptions(_fileNames);
+        _loadFilesDropdown.value = _fileNames.FindIndex(val => val == prevFileName);
+    }
+
+    public void DeliteFile()
+    {
+        string delitePath = Path.Combine(_baseSavePath, _loadFilesDropdown.captionText.text);
+        delitePath = Path.ChangeExtension(delitePath, _myExtension);
+        if (File.Exists(delitePath)) File.Delete(delitePath);
+        UpdateLoadFiles();
+    }
 }
